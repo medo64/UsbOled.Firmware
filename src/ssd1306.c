@@ -85,6 +85,11 @@ void ssd1306_displayOn() {
 }
 
 
+void ssd1306_setContrast(uint8_t value) {
+    ssd1306_writeRawCommandTwoBytes(SSD1306_SET_CONTRAST_CONTROL, value);
+}
+
+
 void ssd1306_writeRawCommandByte(uint8_t value) {
    i2c_master_startWrite(displayAddress);
    i2c_master_writeByte(0x00);
