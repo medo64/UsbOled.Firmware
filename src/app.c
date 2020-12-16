@@ -25,13 +25,11 @@ void main(void) {
     }
 
     ssd1306_init(0x3C, 128, 64);
-
     while(true) {
-        ssd1306_displayOn();
+        ssd1306_clearAll();
+        ssd1306_writeText("MEDO64.COM");
         wait_short(); wait_short(); wait_short(); wait_short(); wait_short();
         wait_short(); wait_short(); wait_short(); wait_short(); wait_short();
-        ssd1306_displayOff();
-        wait_short();
     }
 
     ready();

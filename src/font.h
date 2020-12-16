@@ -1,7 +1,9 @@
 #ifndef FONT_H
 #define	FONT_H
 
-const unsigned char font_8x8[] = {
+#include <stdint.h>
+
+const uint8_t font_8x8[] = {
           // 0x21   !
     0x30, // ░░██░░░░
     0x78, // ░████░░░
