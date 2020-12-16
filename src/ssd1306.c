@@ -22,12 +22,30 @@
 #define SSD1306_SET_COM_PINS_HARDWARE_CONFIGURATION  0xDA
 #define SSD1306_SET_VCOMH_DESELECT_LEVEL             0xDB
 
+void ssd1306_writeRawCommandByte(uint8_t value);
+void ssd1306_writeRawCommandTwoBytes(uint8_t value1, uint8_t value2);
+
+
 uint8_t slaveAddress;
 
 void ssd1306_init(uint8_t address) {
     slaveAddress = address;
+
+    //reset I2C bus
+    LATC0 = 0;                                // set clock low
+    LATC1 = 0;                                // set data low
+    TRISC0 = 1;                               // clock pin configured as output
+    TRISC1 = 1;                               // data pin configured as input
+    for (unsigned char j=0; j<3; j++) {       // repeat 3 times with alternating data
+        for (unsigned char i=0; i<10; i++) {  // 9 cycles + 1 extra
+            TRISC0 = 0; __delay_us(50);       // force clock low
+            TRISC0 = 1; __delay_us(50);       // release clock high
+        }
+        TRISC1 = !TRISC1;                     // toggle data line
+    }
+
     i2c_master_init();
-    
+
     ssd1306_writeRawCommandByte(SSD1306_SET_DISPLAY_OFF);                               // Set Display Off
     ssd1306_writeRawCommandTwoBytes(SSD1306_SET_DISPLAY_CLOCK_DIVIDE_RATIO, 0x80);      // Set Display Clock Divide Ratio/Oscillator Frequency
     ssd1306_writeRawCommandTwoBytes(SSD1306_SET_MULTIPLEX_RATIO, 32 - 1);               // Set Multiplex Ratio (line count - 1)
@@ -44,6 +62,16 @@ void ssd1306_init(uint8_t address) {
     ssd1306_writeRawCommandByte(SSD1306_SET_NORMAL_DISPLAY);                            // Set Normal/Inverse Display
     ssd1306_writeRawCommandByte(SSD1306_SET_DISPLAY_ON);                                // Set Display On
 }
+
+
+void ssd1306_displayOff() {
+    ssd1306_writeRawCommandByte(SSD1306_SET_DISPLAY_OFF);
+}
+
+void ssd1306_displayOn() {
+    ssd1306_writeRawCommandByte(SSD1306_SET_DISPLAY_ON);
+}
+
 
 void ssd1306_writeRawCommandByte(uint8_t value) {
    i2c_master_startWrite(slaveAddress);

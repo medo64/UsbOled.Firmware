@@ -5,7 +5,7 @@
 
 void ssd1306_init(uint8_t address);
 
-void ssd1306_writeRawCommandByte(uint8_t value);
-void ssd1306_writeRawCommandTwoBytes(uint8_t value1, uint8_t value2);
+void ssd1306_displayOff();
+void ssd1306_displayOn();
 
 #endif

@@ -2,7 +2,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include "i2c_master.h"
-
+#include "hardware.h"
 
 #define READ  1
 #define WRITE 0
@@ -15,14 +15,16 @@ void waitIdle() {
 }
 
 void i2c_master_init() {
-    SSPCON1 = 0b00101000;                     // enable I2C master mode
-    SSPCON2 = 0x00;                           // reset all
-    SSPSTAT = 0b00000000;                     // slew control enabled
-    SSPADD = 239;                             // 50 kHz
-    TRISC0 = 1;                                // clock pin configured as input
-    TRISC1 = 1;                                // data pin configured as input
-}
+    SSPCON1 = 0;  SSPCON2 = 0;  SSPSTAT = 0;  // reset all
 
+    SSPCON1bits.SSPM = 0b00101000;            // I2C master mode
+    SSPCON1bits.SSPEN = 1;                    // enable I2C master mode
+    SSP1STATbits.CKE = 1;                     // slew control enabled, low voltage input (SMBus) enables
+    SSP1ADD = 119;                            // 100 kHz
+
+    TRISC0 = 1;                               // clock pin configured as input
+    TRISC1 = 1;                               // data pin configured as input}
+}
 
 bool i2c_master_startRead(uint8_t address) {
     i2c_master_start();                                  // Start

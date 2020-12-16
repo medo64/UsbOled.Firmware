@@ -24,24 +24,31 @@ void main(void) {
         led_activity_on();
     }
 
+    /*
+    LATC0 = 0;                                // set clock low
+    LATC1 = 0;                                // set data low
+    TRISC0 = 1;                               // clock pin configured as output
+    TRISC1 = 1;                               // data pin configured as input
+    SSP1IF = 0;
+
+    for (unsigned char j=0; j<3; j++) {       // repeat 3 times with alternating data
+        for (unsigned char i=0; i<10; i++) {  // 9 cycles + 1 extra
+            TRISC0 = 0;
+            __delay_us(50);
+            TRISC0 = 1;
+            __delay_us(50);
+        }
+        __delay_us(50);
+        TRISC1 = !TRISC1;
+    }
+    */
+
+    ssd1306_init(0x3C);
+
     while(true) {
-        led_activity_toggle();
-        ssd1306_init(0x3C);
-        wait_short();
-        wait_short();
-        wait_short();
-        wait_short();
-        wait_short();
-        wait_short();
-        wait_short();
-        wait_short();
-        wait_short();
-        wait_short();
-        wait_short();
-        wait_short();
-        wait_short();
-        wait_short();
-        wait_short();
+        ssd1306_displayOn();
+        wait_short();  wait_short();  wait_short();  wait_short();  wait_short();
+        ssd1306_displayOff();
         wait_short();
     }
 
