@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 
-void ssd1306_init(uint8_t address);
+void ssd1306_init(uint8_t address, uint8_t width, uint8_t height);
 
 void ssd1306_displayOff();
 void ssd1306_displayOn();
