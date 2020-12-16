@@ -2,7 +2,13 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include "i2c_master.h"
-#include "hardware.h"
+
+/*** CONFIGURATION BEGIN ******************************************************/
+
+# define BAUD_RATE_VALUE 29              // 400kHz: Frequency / bitRate / 4 - 1
+
+/*** CONFIGURATION END ********************************************************/
+
 
 #define READ  1
 #define WRITE 0
@@ -20,7 +26,7 @@ void i2c_master_init() {
     SSPCON1bits.SSPM = 0b00101000;            // I2C master mode
     SSPCON1bits.SSPEN = 1;                    // enable I2C master mode
     SSP1STATbits.CKE = 1;                     // slew control enabled, low voltage input (SMBus) enables
-    SSP1ADD = 119;                            // 100 kHz
+    SSP1ADD = BAUD_RATE_VALUE;                // setup speed
 
     TRISC0 = 1;                               // clock pin configured as input
     TRISC1 = 1;                               // data pin configured as input}
