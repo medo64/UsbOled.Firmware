@@ -22,8 +22,8 @@
 #define SSD1306_SET_COM_PINS_HARDWARE_CONFIGURATION  0xDA
 #define SSD1306_SET_VCOMH_DESELECT_LEVEL             0xDB
 
-void ssd1306_writeRawCommandByte(uint8_t value);
-void ssd1306_writeRawCommandTwoBytes(uint8_t value1, uint8_t value2);
+void ssd1306_writeRawCommand1(uint8_t value);
+void ssd1306_writeRawCommand2(uint8_t value1, uint8_t value2);
 
 
 uint8_t displayAddress;
@@ -50,54 +50,56 @@ void ssd1306_init(uint8_t address, uint8_t width, uint8_t height) {
 
     i2c_master_init();
 
-    ssd1306_writeRawCommandByte(SSD1306_SET_DISPLAY_OFF);                               // Set Display Off
-    ssd1306_writeRawCommandTwoBytes(SSD1306_SET_DISPLAY_CLOCK_DIVIDE_RATIO, 0x80);      // Set Display Clock Divide Ratio/Oscillator Frequency
-    ssd1306_writeRawCommandTwoBytes(SSD1306_SET_MULTIPLEX_RATIO, height - 1);           // Set Multiplex Ratio (line count - 1)
-    ssd1306_writeRawCommandTwoBytes(SSD1306_SET_DISPLAY_OFFSET, 0x00);                  // Set Display Offset
-    ssd1306_writeRawCommandByte(SSD1306_SET_DISPLAY_START_LINE);                        // Set Display Start Line 
-    ssd1306_writeRawCommandTwoBytes(SSD1306_SET_CHARGE_PUMP, 0x14);                     // Set Charge Pump (0x10 external vcc, 0x14 internal vcc)
-    ssd1306_writeRawCommandByte(SSD1306_SET_SEGMENT_REMAP);                             // Set Segment Re-Map
-    ssd1306_writeRawCommandByte(SSD1306_SET_COM_OUTPUT_SCAN_DIRECTION);                 // Set COM Output Scan Direction
+    ssd1306_writeRawCommand1(SSD1306_SET_DISPLAY_OFF);                                    // Set Display Off
+    ssd1306_writeRawCommand2(SSD1306_SET_DISPLAY_CLOCK_DIVIDE_RATIO, 0x80);               // Set Display Clock Divide Ratio/Oscillator Frequency
+    ssd1306_writeRawCommand2(SSD1306_SET_MULTIPLEX_RATIO, height - 1);                    // Set Multiplex Ratio (line count - 1)
+    ssd1306_writeRawCommand2(SSD1306_SET_DISPLAY_OFFSET, 0x00);                           // Set Display Offset
+    ssd1306_writeRawCommand1(SSD1306_SET_DISPLAY_START_LINE);                             // Set Display Start Line 
+    ssd1306_writeRawCommand2(SSD1306_SET_CHARGE_PUMP, 0x14);                              // Set Charge Pump (0x10 external vcc, 0x14 internal vcc)
+    ssd1306_writeRawCommand1(SSD1306_SET_SEGMENT_REMAP);                                  // Set Segment Re-Map
+    ssd1306_writeRawCommand1(SSD1306_SET_COM_OUTPUT_SCAN_DIRECTION);                      // Set COM Output Scan Direction
     switch (height) {
         case 32:
-            ssd1306_writeRawCommandTwoBytes(SSD1306_SET_COM_PINS_HARDWARE_CONFIGURATION, 0x02);  // Set COM Pins Hardware Configuration (0x02 128x32, 0x12 128x64)
-            ssd1306_writeRawCommandTwoBytes(SSD1306_SET_CONTRAST_CONTROL, 0x8F);                 // Set Contrast Control (0x8F 128x32; 0x9F 128x64 external vcc; 0xCF 128x64 internal vcc)
+            ssd1306_writeRawCommand2(SSD1306_SET_COM_PINS_HARDWARE_CONFIGURATION, 0x02);  // Set COM Pins Hardware Configuration (0x02 128x32, 0x12 128x64)
+            ssd1306_writeRawCommand2(SSD1306_SET_CONTRAST_CONTROL, 0x8F);                 // Set Contrast Control (0x8F 128x32; 0x9F 128x64 external vcc; 0xCF 128x64 internal vcc)
             break;
         case 64:
-            ssd1306_writeRawCommandTwoBytes(SSD1306_SET_COM_PINS_HARDWARE_CONFIGURATION, 0x12);  // Set COM Pins Hardware Configuration (0x02 128x32, 0x12 128x64)
-            ssd1306_writeRawCommandTwoBytes(SSD1306_SET_CONTRAST_CONTROL, 0xCF);                 // Set Contrast Control (0x8F 128x32; 0x9F 128x64 external vcc; 0xCF 128x64 internal vcc)
+            ssd1306_writeRawCommand2(SSD1306_SET_COM_PINS_HARDWARE_CONFIGURATION, 0x12);  // Set COM Pins Hardware Configuration (0x02 128x32, 0x12 128x64)
+            ssd1306_writeRawCommand2(SSD1306_SET_CONTRAST_CONTROL, 0xCF);                 // Set Contrast Control (0x8F 128x32; 0x9F 128x64 external vcc; 0xCF 128x64 internal vcc)
             break;
     }
-    ssd1306_writeRawCommandTwoBytes(SSD1306_SET_PRECHARGE_PERIOD, 0xF1);                // Set Pre-Charge Period (0x22 external vcc; 0xF1 internal vcc)
-    ssd1306_writeRawCommandTwoBytes(SSD1306_SET_VCOMH_DESELECT_LEVEL, 0x40);            // Set VCOMH Deselect Level
-    ssd1306_writeRawCommandByte(SSD1306_ENTIRE_DISPLAY_ON_FORCED);                      // Set Entire Display On/Off
-    ssd1306_writeRawCommandByte(SSD1306_SET_NORMAL_DISPLAY);                            // Set Normal/Inverse Display
-    ssd1306_writeRawCommandByte(SSD1306_SET_DISPLAY_ON);                                // Set Display On
+    ssd1306_writeRawCommand2(SSD1306_SET_PRECHARGE_PERIOD, 0xF1);                         // Set Pre-Charge Period (0x22 external vcc; 0xF1 internal vcc)
+    ssd1306_writeRawCommand2(SSD1306_SET_VCOMH_DESELECT_LEVEL, 0x40);                     // Set VCOMH Deselect Level
+    ssd1306_writeRawCommand1(SSD1306_ENTIRE_DISPLAY_ON);                                  // Set Entire Display On/Off
+    ssd1306_writeRawCommand1(SSD1306_SET_NORMAL_DISPLAY);                                 // Set Normal/Inverse Display
+
+    ssd1306_writeRawCommand2(SSD1306_SET_MEMORY_ADDRESSING_MODE, 0x00);                   // Set Horizontal addressing
+
+    ssd1306_writeRawCommand1(SSD1306_SET_DISPLAY_ON);                                     // Set Display On
 }
 
 
 void ssd1306_displayOff() {
-    ssd1306_writeRawCommandByte(SSD1306_SET_DISPLAY_OFF);
+    ssd1306_writeRawCommand1(SSD1306_SET_DISPLAY_OFF);
 }
 
 void ssd1306_displayOn() {
-    ssd1306_writeRawCommandByte(SSD1306_SET_DISPLAY_ON);
+    ssd1306_writeRawCommand1(SSD1306_SET_DISPLAY_ON);
 }
-
 
 void ssd1306_setContrast(uint8_t value) {
-    ssd1306_writeRawCommandTwoBytes(SSD1306_SET_CONTRAST_CONTROL, value);
+    ssd1306_writeRawCommand2(SSD1306_SET_CONTRAST_CONTROL, value);
 }
 
 
-void ssd1306_writeRawCommandByte(uint8_t value) {
+void ssd1306_writeRawCommand1(uint8_t value) {
    i2c_master_startWrite(displayAddress);
    i2c_master_writeByte(0x00);
    i2c_master_writeByte(value);
    i2c_master_stop();
 }
 
-void ssd1306_writeRawCommandTwoBytes(uint8_t value1, uint8_t value2) {
+void ssd1306_writeRawCommand2(uint8_t value1, uint8_t value2) {
    i2c_master_startWrite(displayAddress);
    i2c_master_writeByte(0x00);
    i2c_master_writeByte(value1);
