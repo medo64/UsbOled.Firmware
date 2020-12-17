@@ -33,7 +33,6 @@ void ssd1306_writeRawCommand1(uint8_t value);
 void ssd1306_writeRawCommand2(uint8_t value1, uint8_t value2);
 void ssd1306_writeRawCommand3(uint8_t value1, uint8_t value2, uint8_t value3);
 void ssd1306_writeRawData(uint8_t* value, uint8_t count);
-void ssd1306_writeRawData1(uint8_t value);
 void ssd1306_writeRawDataZeros(uint8_t count);
 
 uint8_t displayAddress;
@@ -260,13 +259,6 @@ void ssd1306_writeRawCommand3(uint8_t value1, uint8_t value2, uint8_t value3) {
    i2c_master_writeByte(value1);
    i2c_master_writeByte(value2);
    i2c_master_writeByte(value3);
-   i2c_master_stop();
-}
-
-void ssd1306_writeRawData1(uint8_t value) {
-   i2c_master_startWrite(displayAddress);
-   i2c_master_writeByte(0x40);
-   i2c_master_writeByte(value);
    i2c_master_stop();
 }
 
