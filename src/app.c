@@ -63,8 +63,7 @@ void main(void) {
             led_activity_on();
             LedTimeout = LED_TIMEOUT;
 
-            //copy buffer
-            for (uint8_t i = 0; i < usbCount; i++) {
+            for (uint8_t i = 0; i < usbCount; i++) {  // copy to buffer
                 InputBuffer[InputBufferEnd] = UsbReadBuffer[i];
                 if (InputBufferCount < INPUT_BUFFER_MAX) {
                     InputBufferEnd = (InputBufferEnd + 1) % INPUT_BUFFER_MAX;
@@ -73,15 +72,15 @@ void main(void) {
             }
         }
 
-        //TODO
-        
+        // TODO
+
         // USB send reply
-        if (InputBufferCount > 0) {
+        if ((InputBufferCount > 0) && USBUSARTIsTxTrfReady()) {
             led_activity_on();
             LedTimeout = LED_TIMEOUT;
 
             uint8_t usbCount = 0;
-            for (uint8_t i = 0; i < USB_WRITE_BUFFER_MAX; i++) {
+            for (uint8_t i = 0; i < USB_WRITE_BUFFER_MAX; i++) {  // copy to output buffer
                 if (InputBufferCount > 0) {
                     UsbWriteBuffer[i] = InputBuffer[InputBufferStart];
                     InputBufferStart = (InputBufferStart + 1) % INPUT_BUFFER_MAX;
