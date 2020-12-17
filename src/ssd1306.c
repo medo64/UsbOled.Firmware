@@ -145,7 +145,7 @@ void ssd1306_writeCharacter(const uint8_t value) {
         data[0] = 0; data[1] = 0; data[2] = 0; data[3] = 0;
         data[4] = 0; data[5] = 0; data[6] = 0; data[7] = 0;
     } else {
-        uint16_t index = (value - 33) * 8;
+        uint16_t index = (value - 33) << 3;  // *8
         data[0] = font_8x8[index + 0];
         data[1] = font_8x8[index + 1];
         data[2] = font_8x8[index + 2];
@@ -185,7 +185,7 @@ void ssd1306_writeLargeCharacter(const uint8_t value) {
         data[0] = 0; data[1] = 0; data[2] = 0; data[3] = 0;
         data[4] = 0; data[5] = 0; data[6] = 0; data[7] = 0;
     } else {
-        uint16_t index = (value - 33) * 16;
+        uint16_t index = (value - 33) << 4;  // *16
         data[0] = font_8x16[index + 8];
         data[1] = font_8x16[index + 9];
         data[2] = font_8x16[index + 10];
@@ -205,7 +205,7 @@ void ssd1306_writeLargeCharacter(const uint8_t value) {
         data[0] = 0; data[1] = 0; data[2] = 0; data[3] = 0;
         data[4] = 0; data[5] = 0; data[6] = 0; data[7] = 0;
     } else {
-        uint16_t index = (value - 33) * 16;
+        uint16_t index = (value - 33) << 4;  // *16
         data[0] = font_8x16[index + 0];
         data[1] = font_8x16[index + 1];
         data[2] = font_8x16[index + 2];
