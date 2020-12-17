@@ -16,12 +16,12 @@
         <itemPath>Microchip/usb_hal.h</itemPath>
         <itemPath>Microchip/usb_hal_pic16f1.h</itemPath>
       </logicalFolder>
-      <itemPath>hardware.h</itemPath>
       <itemPath>led.h</itemPath>
       <itemPath>app.h</itemPath>
       <itemPath>font.h</itemPath>
       <itemPath>ssd1306.h</itemPath>
       <itemPath>i2c_master.h</itemPath>
+      <itemPath>system.h</itemPath>
     </logicalFolder>
     <logicalFolder name="LinkerScript"
                    displayName="Linker Files"
@@ -37,10 +37,10 @@
         <itemPath>Microchip/usb_events.c</itemPath>
       </logicalFolder>
       <itemPath>app.c</itemPath>
-      <itemPath>hardware.c</itemPath>
       <itemPath>led.c</itemPath>
       <itemPath>ssd1306.c</itemPath>
       <itemPath>i2c_master.c</itemPath>
+      <itemPath>system.c</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"

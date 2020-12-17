@@ -1,7 +1,7 @@
 #include <stdint.h>
 #include <xc.h>
 #include "font.h"
-#include "hardware.h"
+#include "system.h"
 #include "i2c_master.h"
 #include "ssd1306.h"
 

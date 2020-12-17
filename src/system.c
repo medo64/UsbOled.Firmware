@@ -1,9 +1,9 @@
 #include <xc.h>
 #include <stdint.h>
-#include "hardware.h"
+#include "system.h"
 
 void init(void) {
-    interrupt_disable();
+    interruptsDisable();
 
     // Oscillator
     OSCCONbits.IRCF = 0b1111;  // 16 MHz or 48 MHz HF
@@ -17,21 +17,4 @@ void init(void) {
     //LATA1 = 0;   // D-
     //TRISA0 = 0;  // D+
     //TRISA1 = 0;  // D-
-}
-
-void ready() {
-    interrupt_enable();
-}
-
-
-void wait_1ms() {
-    __delay_ms(1);
-}
-
-void wait_10ms() {
-    __delay_ms(10);
-}
-
-void wait_short(void) {
-    __delay_ms(150);
 }

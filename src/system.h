@@ -1,5 +1,5 @@
-#ifndef HARDWARE_H
-#define HARDWARE_H
+#ifndef SYSTEM_H
+#define SYSTEM_H
 
 
 // CONFIG1
@@ -28,16 +28,12 @@
 #define _XTAL_FREQ 48000000
 
 
-#define interrupt_enable()   GIE = 1
-#define interrupt_disable()  GIE = 0
+#define interruptsEnable()   GIE = 1
+#define interruptsDisable()  GIE = 0
+
+#define wait_short()  __delay_ms(150);
 
 
 void init(void);
-void ready(void);
 
-void wait_1ms();
-void wait_10ms();
-void wait_short(void);
-
-
-#endif	/* HARDWARE_H */
+#endif

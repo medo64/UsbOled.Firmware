@@ -3,7 +3,7 @@
 #include "Microchip/usb_device.h"
 #include "Microchip/usb_device_cdc.h"
 #include "app.h"
-#include "hardware.h"
+#include "system.h"
 #include "led.h"
 #include "ssd1306.h"
 
