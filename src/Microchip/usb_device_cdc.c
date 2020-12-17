@@ -54,9 +54,10 @@ please contact mla_licensing@microchip.com
     #define IN_DATA_BUFFER_ADDRESS_TAG
     #define OUT_DATA_BUFFER_ADDRESS_TAG
     #define CONTROL_BUFFER_ADDRESS_TAG
+    #define DRIVER_DATA_ADDRESS_TAG
 #endif
 
-#if !defined(IN_DATA_BUFFER_ADDRESS_TAG) || !defined(OUT_DATA_BUFFER_ADDRESS_TAG) || !defined(CONTROL_BUFFER_ADDRESS_TAG)
+#if !defined(IN_DATA_BUFFER_ADDRESS_TAG) || !defined(OUT_DATA_BUFFER_ADDRESS_TAG) || !defined(CONTROL_BUFFER_ADDRESS_TAG) || !defined(DRIVER_DATA_ADDRESS_TAG)
     #error "One of the fixed memory address definitions is not defined.  Please define the required address tags for the required buffers."
 #endif
 
@@ -76,7 +77,7 @@ LINE_CODING line_coding;    // Buffer to store line coding information
 CDC_NOTICE cdc_notice;
 
 #if defined(USB_CDC_SUPPORT_DSR_REPORTING)
-    SERIAL_STATE_NOTIFICATION SerialStatePacket;
+    SERIAL_STATE_NOTIFICATION SerialStatePacket DRIVER_DATA_ADDRESS_TAG;
 #endif
 
 uint8_t cdc_rx_len;            // total rx length
@@ -217,6 +218,16 @@ void USBCheckCDCRequest(void)
             //CONFIGURE_RTS(control_signal_bitmap.CARRIER_CONTROL);
             //------------------------------------------------------------------
 
+            #if defined(USB_CDC_SUPPORT_DTR_SIGNALING)
+                if(control_signal_bitmap.DTE_PRESENT == 1)
+                {
+                    UART_DTR = USB_CDC_DTR_ACTIVE_LEVEL;
+                }
+                else
+                {
+                    UART_DTR = (USB_CDC_DTR_ACTIVE_LEVEL ^ 1);
+                }
+            #endif
             inPipes[0].info.bits.busy = 1;
             break;
         #endif
@@ -321,6 +332,15 @@ void CDCInitEP(void)
         SerialStatePacket.Reserved = 0x00;
         SerialStatePacket.wLength = 0x02;   //Always 2 bytes for this type of packet
         CDCNotificationHandler();
+  	#endif
+
+  	#if defined(USB_CDC_SUPPORT_DTR_SIGNALING)
+  	    mInitDTRPin();
+  	#endif
+
+  	#if defined(USB_CDC_SUPPORT_HARDWARE_FLOW_CONTROL)
+  	    mInitRTSPin();
+  	    mInitCTSPin();
   	#endif
 
     cdc_trf_state = CDC_TX_READY;
@@ -703,10 +723,10 @@ void putsUSBUSART(char *data)
                             will be transferred to the host.
 
   **************************************************************************/
-void putrsUSBUSART(const const char *data)
+void putrsUSBUSART(const char *data)
 {
     uint8_t len;
-    const const char *pData;
+    const char *pData;
 
     /*
      * User should have checked that cdc_trf_state is in CDC_TX_READY state

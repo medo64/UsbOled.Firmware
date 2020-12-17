@@ -22,8 +22,16 @@ please contact mla_licensing@microchip.com
 
 #define FIXED_ADDRESS_MEMORY
 
+#if(__XC8_VERSION < 2000)
 #define IN_DATA_BUFFER_ADDRESS_TAG      @0x0A0
 #define OUT_DATA_BUFFER_ADDRESS_TAG     @0x120
 #define CONTROL_BUFFER_ADDRESS_TAG      @0x1A0
+    #define DRIVER_DATA_ADDRESS_TAG         @0x1A8
+#else
+    #define IN_DATA_BUFFER_ADDRESS_TAG      __at(0x0A0)
+    #define OUT_DATA_BUFFER_ADDRESS_TAG     __at(0x120)
+    #define CONTROL_BUFFER_ADDRESS_TAG      __at(0x1A0)
+    #define DRIVER_DATA_ADDRESS_TAG         __at(0x1A8)
+#endif
 
 #endif //FIXED_MEMORY_ADDRESS

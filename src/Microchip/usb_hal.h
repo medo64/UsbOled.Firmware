@@ -14,7 +14,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 
-To request to license the code under the MLA license (www.microchip.com/mla_license), 
+To request to license the code under the MLA license (www.microchip.com/mla_license),
 please contact mla_licensing@microchip.com
 *******************************************************************************/
 //DOM-IGNORE-END
@@ -36,7 +36,7 @@ please contact mla_licensing@microchip.com
         #include "usb_hal_pic18.h"
     #endif
 #elif defined(__C30__) || defined __XC16__
-	#if defined(__dsPIC33E__) 
+	#if defined(__dsPIC33E__)
             #include "usb_hal_dspic33e.h"
 	#elif defined(__PIC24E__)
             #include "usb_hal_pic24e.h"
@@ -412,7 +412,7 @@ bool USBHALUnstallPipe( TRANSFER_FLAGS pipe );
         This function returns a 16-bit bit-mapped value with a
         bit set in the position of any endpoint that is stalled
         (i.e. if endpoint 0 is stalled then bit 0 is set, if
-        endpoint 1 is stalled then bit 1 is set, etc.).     
+        endpoint 1 is stalled then bit 1 is set, etc.).
 
     Preconditions:
         USBHALInitialize must have been called to initialize

@@ -13,7 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 
-To request to license the code under the MLA license (www.microchip.com/mla_license), 
+To request to license the code under the MLA license (www.microchip.com/mla_license),
 please contact mla_licensing@microchip.com
 *******************************************************************************/
 
@@ -22,6 +22,27 @@ please contact mla_licensing@microchip.com
 #include "usb_device.h"
 #include "usb_device_cdc.h"
 
+/*******************************************************************
+ * Function:        bool USER_USB_CALLBACK_EVENT_HANDLER(
+ *                        USB_EVENT event, void *pdata, uint16_t size)
+ *
+ * PreCondition:    None
+ *
+ * Input:           USB_EVENT event - the type of event
+ *                  void *pdata - pointer to the event data
+ *                  uint16_t size - size of the event data
+ *
+ * Output:          None
+ *
+ * Side Effects:    None
+ *
+ * Overview:        This function is called from the USB stack to
+ *                  notify a user application that a USB event
+ *                  occured.  This callback is in interrupt context
+ *                  when the USB_INTERRUPT option is selected.
+ *
+ * Note:            None
+ *******************************************************************/
 bool USER_USB_CALLBACK_EVENT_HANDLER(USB_EVENT event, void *pdata, uint16_t size)
 {
     switch( (int) event )
@@ -38,25 +59,39 @@ bool USER_USB_CALLBACK_EVENT_HANDLER(USB_EVENT event, void *pdata, uint16_t size
         case EVENT_SUSPEND:
             /* Update the LED status for the suspend event. */
             //APP_LEDUpdateUSBStatus();
+
+            //Call the hardware platform specific handler for suspend events for
+            //possible further action (like optionally going reconfiguring the application
+            //for lower power states and going to sleep during the suspend event).  This
+            //would normally be done in USB compliant bus powered applications, although
+            //no further processing is needed for purely self powered applications that
+            //don't consume power from the host.
+            //SYSTEM_Initialize(SYSTEM_STATE_USB_SUSPEND);
             break;
 
         case EVENT_RESUME:
             /* Update the LED status for the resume event. */
             //APP_LEDUpdateUSBStatus();
+
+            //Call the hardware platform specific resume from suspend handler (ex: to
+            //restore I/O pins to higher power states if they were changed during the
+            //preceding SYSTEM_Initialize(SYSTEM_STATE_USB_SUSPEND) call at the start
+            //of the suspend condition.
+            //SYSTEM_Initialize(SYSTEM_STATE_USB_RESUME);
             break;
 
         case EVENT_CONFIGURED:
             /* When the device is configured, we can (re)initialize the
              * demo code. */
             CDCInitEP();
-            //USART_Initialize();
+            //APP_DeviceCDCBasicDemoInitialize();
             break;
 
         case EVENT_SET_DESCRIPTOR:
             break;
 
         case EVENT_EP0_REQUEST:
-            /* We have received a non-standard USB request.  The HID driver
+            /* We have received a non-standard USB request.  The CDC driver
              * needs to check to see if the request was for it. */
             USBCheckCDCRequest();
             break;

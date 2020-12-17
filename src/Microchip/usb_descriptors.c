@@ -13,7 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 
-To request to license the code under the MLA license (www.microchip.com/mla_license), 
+To request to license the code under the MLA license (www.microchip.com/mla_license),
 please contact mla_licensing@microchip.com
 *******************************************************************************/
 
@@ -149,7 +149,8 @@ state according to the definition in the USB specification.
 #endif
 
 /* Device Descriptor */
-const USB_DEVICE_DESCRIPTOR device_dsc = {
+const USB_DEVICE_DESCRIPTOR device_dsc=
+{
     0x12,                   // Size of this descriptor in bytes
     USB_DESCRIPTOR_DEVICE,  // DEVICE descriptor type
     0x0200,                 // USB Spec Release Number in BCD format
@@ -158,7 +159,7 @@ const USB_DEVICE_DESCRIPTOR device_dsc = {
     0x00,                   // Protocol code
     USB_EP0_BUFF_SIZE,      // Max packet size for EP0, see usb_config.h
     0x04D8,                 // Vendor ID
-    0xEA9E,                 // Product ID: CDC UsbOled
+    0xEA9E,                 // Product ID: CDC USB OLED
     0x0100,                 // Device release number in BCD format
     0x01,                   // Manufacturer string index
     0x02,                   // Product string index
@@ -167,7 +168,7 @@ const USB_DEVICE_DESCRIPTOR device_dsc = {
 };
 
 /* Configuration 1 Descriptor */
-const uint8_t configDescriptor1[] = {
+const uint8_t configDescriptor1[]={
     /* Configuration Descriptor */
     0x09,//sizeof(USB_CFG_DSC),    // Size of this descriptor in bytes
     USB_DESCRIPTOR_CONFIGURATION,                // CONFIGURATION descriptor type
@@ -177,7 +178,7 @@ const uint8_t configDescriptor1[] = {
     0,                      // Configuration string index
     _DEFAULT | _SELF,               // Attributes, see usb_device.h
     50,                     // Max power consumption (2X mA)
-							
+
     /* Interface Descriptor */
     9,//sizeof(USB_INTF_DSC),   // Size of this descriptor in bytes
     USB_DESCRIPTOR_INTERFACE,               // INTERFACE descriptor type
@@ -254,38 +255,41 @@ const uint8_t configDescriptor1[] = {
 
 //Language code string descriptor
 const struct{uint8_t bLength;uint8_t bDscType;uint16_t string[1];}sd000={
-    sizeof(sd000),USB_DESCRIPTOR_STRING,{0x0409}};
+sizeof(sd000),USB_DESCRIPTOR_STRING,{0x0409}};
 
 //Manufacturer string descriptor
 const struct{uint8_t bLength;uint8_t bDscType;uint16_t string[25];}sd001={
-    sizeof(sd001),USB_DESCRIPTOR_STRING, {
-        'J','o','s','i','p',' ','M','e','d','v','e','d',' ','<','m','e','d','o','6','4','.','c','o','m','>'
-    }};
+sizeof(sd001),USB_DESCRIPTOR_STRING,
+{'J','o','s','i','p',' ','M','e','d','v','e','d',' ',
+'<','m','e','d','o','6','4','.','c','o','m','>'
+}};
 
 //Product string descriptor
 const struct{uint8_t bLength;uint8_t bDscType;uint16_t string[12];}sd002={
-    sizeof(sd002),USB_DESCRIPTOR_STRING, {
-        'C','D','C',' ','U','S','B',' ','O','L','E','D'
-    }};
+sizeof(sd002),USB_DESCRIPTOR_STRING,
+{'C','D','C',' ',
+'U','S','B',' ','O','L','E','D'}
+};
 
 //Serial string descriptor
-const struct{uint8_t bLength;uint8_t bDscType;uint16_t string[16];}sd003 __at(0x1F00)={
-    sizeof(sd003),USB_DESCRIPTOR_STRING, {
-        'E','A','9','E','1','9','7','9','0','1','2','8','1','8','1','5'
-    }};
+const struct{uint8_t bLength;uint8_t bDscType;uint16_t string[12];}sd003 __at(0x1F00)={
+sizeof(sd003),USB_DESCRIPTOR_STRING,
+{'E','A','9','E',
+'1','9','7','9','0','1','2','8'}
+};
 
 //Array of configuration descriptors
 const uint8_t *const USB_CD_Ptr[]=
 {
     (const uint8_t *const)&configDescriptor1
 };
-
 //Array of string descriptors
-const uint8_t *const USB_SD_Ptr[USB_NUM_STRING_DESCRIPTORS]= {
+const uint8_t *const USB_SD_Ptr[USB_NUM_STRING_DESCRIPTORS]=
+{
     (const uint8_t *const)&sd000,
     (const uint8_t *const)&sd001,
     (const uint8_t *const)&sd002,
-    (const uint8_t *const)&sd003
+    (const uint8_t *const)&sd003,
 };
 
 #if defined(__18CXX)
