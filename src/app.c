@@ -27,7 +27,7 @@ void main(void) {
     ssd1306_clearAll();
     while(true) {
         ssd1306_moveTo(0, 0);
-        ssd1306_writeText("MEDO64.COM");
+        ssd1306_writeLargeText("MEDO64.COM");
         ssd1306_writeTextAt("ABCDEFGHIJKLMNOPQRSTUVWXYZ", 2, 0);
         wait_short(); wait_short(); wait_short(); wait_short(); wait_short();
         wait_short(); wait_short(); wait_short(); wait_short(); wait_short();
