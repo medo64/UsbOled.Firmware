@@ -166,9 +166,12 @@ void ssd1306_writeText(const uint8_t* text) {
     }
 }
 
-void ssd1306_writeTextAt(const uint8_t* value, const uint8_t row, const uint8_t column) {
+void ssd1306_writeTextAt(const uint8_t* text, const uint8_t row, const uint8_t column) {
     ssd1306_moveTo(row, column);
-    ssd1306_writeText(value);
+    while (*text != 0) {
+        ssd1306_writeCharacter(*text);
+        text++;
+    }
 }
 
 
@@ -227,9 +230,12 @@ void ssd1306_writeLargeText(const uint8_t* text) {
     }
 }
 
-void ssd1306_writeLargeTextAt(const uint8_t* value, const uint8_t row, const uint8_t column) {
+void ssd1306_writeLargeTextAt(const uint8_t* text, const uint8_t row, const uint8_t column) {
     ssd1306_moveTo(row, column);
-    ssd1306_writeLargeText(value);
+    while (*text != 0) {
+        ssd1306_writeLargeCharacter(*text);
+        text++;
+    }
 }
 
 
