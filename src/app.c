@@ -25,16 +25,13 @@ void main(void) {
 
     ssd1306_init(0x3C, 128, 64);
     ssd1306_clearAll();
-    while(true) {
-        ssd1306_moveTo(0, 0);
-        ssd1306_writeLargeText("MEDO64.COM");
-        ssd1306_writeTextAt("ABCDEFGHIJKLMNOPQRSTUVWXYZ", 2, 0);
-        wait_short(); wait_short(); wait_short(); wait_short(); wait_short();
-        wait_short(); wait_short(); wait_short(); wait_short(); wait_short();
-    }
 
-    ready();
+    ssd1306_writeLargeText("USB OLED");
+    ssd1306_writeTextAt("medo64.com", 2, 0);
 
+#if defined(USB_INTERRUPT)
+    interruptsEnable();
+#endif
     
     USBDeviceInit();
     USBDeviceAttach();
@@ -51,9 +48,14 @@ void main(void) {
             }
         }
 
-        if (USBGetDeviceState() < CONFIGURED_STATE) { continue; }
-        if (USBIsDeviceSuspended() == true) { continue; }
+#if defined(USB_POLLING)
+        USBDeviceTasks();
+#endif
 
+        if (USBGetDeviceState() < CONFIGURED_STATE) { continue; }
+        if (USBIsDeviceSuspended()) { continue; }
+
+        CDCTxService();
 
         // USB receive
         uint8_t usbCount = getsUSBUSART(UsbReadBuffer, USB_READ_BUFFER_MAX); //until the buffer is free.
@@ -62,7 +64,7 @@ void main(void) {
             LedTimeout = LED_TIMEOUT;
 
             //copy buffer
-            for (int i=0; i<usbCount; i++) {
+            for (uint8_t i = 0; i < usbCount; i++) {
                 InputBuffer[InputBufferEnd] = UsbReadBuffer[i];
                 if (InputBufferCount < INPUT_BUFFER_MAX) {
                     InputBufferEnd = (InputBufferEnd + 1) % INPUT_BUFFER_MAX;
@@ -74,12 +76,12 @@ void main(void) {
         //TODO
         
         // USB send reply
-        if(InputBufferCount > 0) {
+        if (InputBufferCount > 0) {
             led_activity_on();
             LedTimeout = LED_TIMEOUT;
 
             uint8_t usbCount = 0;
-            for (int i=0; i<USB_WRITE_BUFFER_MAX; i++) {
+            for (uint8_t i = 0; i < USB_WRITE_BUFFER_MAX; i++) {
                 if (InputBufferCount > 0) {
                     UsbWriteBuffer[i] = InputBuffer[InputBufferStart];
                     InputBufferStart = (InputBufferStart + 1) % INPUT_BUFFER_MAX;
@@ -92,12 +94,12 @@ void main(void) {
 
             putUSBUSART(&UsbWriteBuffer[0], usbCount);
         }
-
-        CDCTxService();
     }
 }
 
 
-void interrupt SYS_Interrupt(void) {
-    USBDeviceTasks();
+void __interrupt() SYS_InterruptHigh(void) {
+    #if defined(USB_INTERRUPT)
+        USBDeviceTasks();
+    #endif
 }
