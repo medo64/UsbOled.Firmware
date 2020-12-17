@@ -3,7 +3,6 @@
 #include "Microchip/usb_device.h"
 #include "Microchip/usb_device_cdc.h"
 #include "app.h"
-#include "font.h"
 #include "hardware.h"
 #include "led.h"
 #include "ssd1306.h"
@@ -25,9 +24,11 @@ void main(void) {
     }
 
     ssd1306_init(0x3C, 128, 64);
+    ssd1306_clearAll();
     while(true) {
-        ssd1306_clearAll();
+        ssd1306_moveTo(0, 0);
         ssd1306_writeText("MEDO64.COM");
+        ssd1306_writeTextAt("ABCDEFGHIJKLMNOPQRSTUVWXYZ", 2, 0);
         wait_short(); wait_short(); wait_short(); wait_short(); wait_short();
         wait_short(); wait_short(); wait_short(); wait_short(); wait_short();
     }

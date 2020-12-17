@@ -17,16 +17,24 @@ void ssd1306_displayOn();
 void ssd1306_setContrast(uint8_t value);
 
 
+/** Sets column and row to be used (at 8x8 resolution). */
+void ssd1306_moveTo(const uint8_t row, const uint8_t column);
+
+
 /** Clear display content. */
 void ssd1306_clearAll();
 
 /** Clear display content of a single row. */
 void ssd1306_clearRow(uint8_t y);
 
+
 /** Writes character at the current position */
 void ssd1306_writeCharacter(const uint8_t value);
 
-/** Writes character at the current position */
+/** Writes text at the current position */
 void ssd1306_writeText(const uint8_t* value);
+
+/** Writes text at the current position */
+void ssd1306_writeTextAt(const uint8_t* value, const uint8_t row, const uint8_t column);
 
 #endif

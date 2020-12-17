@@ -5,6 +5,8 @@
 #include "i2c_master.h"
 #include "ssd1306.h"
 
+#define SSD1306_SET_LOWER_START_COLUMN_ADDRESS       0x00
+#define SSD1306_SET_UPPER_START_COLUMN_ADDRESS       0x10
 #define SSD1306_SET_MEMORY_ADDRESSING_MODE           0x20
 #define SSD1306_SET_COLUMN_ADDRESS                   0x21
 #define SSD1306_SET_PAGE_ADDRESS                     0x22
@@ -19,6 +21,7 @@
 #define SSD1306_SET_DISPLAY_OFF                      0xAE
 #define SSD1306_SET_DISPLAY_ON                       0xAF
 #define SSD1306_SET_MULTIPLEX_RATIO                  0xA8
+#define SSD1306_SET_PAGE_START_ADDRESS               0xB0
 #define SSD1306_SET_COM_OUTPUT_SCAN_DIRECTION        0xC8
 #define SSD1306_SET_DISPLAY_OFFSET                   0xD3
 #define SSD1306_SET_DISPLAY_CLOCK_DIVIDE_RATIO       0xD5
@@ -31,16 +34,20 @@ void ssd1306_writeRawCommand2(uint8_t value1, uint8_t value2);
 void ssd1306_writeRawCommand3(uint8_t value1, uint8_t value2, uint8_t value3);
 void ssd1306_writeRawData(uint8_t* value, uint8_t count);
 void ssd1306_writeRawData1(uint8_t value);
-void ssd1306_writeRawDataClear(uint8_t count);
+void ssd1306_writeRawDataZeros(uint8_t count);
 
 uint8_t displayAddress;
 uint8_t displayWidth;
 uint8_t displayHeight;
+uint8_t displayColumns;
+uint8_t displayRows;
 
 void ssd1306_init(uint8_t address, uint8_t width, uint8_t height) {
     displayAddress = address;
     displayWidth = width;
     displayHeight = height;
+    displayColumns = width / 8;
+    displayRows = height / 8;
 
     //reset I2C bus
     LATC0 = 0;                                // set clock low
@@ -78,9 +85,9 @@ void ssd1306_init(uint8_t address, uint8_t width, uint8_t height) {
     ssd1306_writeRawCommand2(SSD1306_SET_PRECHARGE_PERIOD, 0xF1);                         // Set Pre-Charge Period (0x22 external vcc; 0xF1 internal vcc)
     ssd1306_writeRawCommand2(SSD1306_SET_VCOMH_DESELECT_LEVEL, 0x40);                     // Set VCOMH Deselect Level
     ssd1306_writeRawCommand1(SSD1306_ENTIRE_DISPLAY_ON);                                  // Set Entire Display On/Off
-    ssd1306_writeRawCommand1(SSD1306_SET_NORMAL_DISPLAY);                                 // Set Normal/Inverse Display
+    ssd1306_writeRawCommand1(SSD1306_SET_NORMAL_DISPLAY);                                 // Set Normal Display
 
-    ssd1306_writeRawCommand2(SSD1306_SET_MEMORY_ADDRESSING_MODE, 0x00);                   // Set Horizontal addressing
+    ssd1306_writeRawCommand2(SSD1306_SET_MEMORY_ADDRESSING_MODE, 0b10);                  // Set Page addressing mode
 
     ssd1306_writeRawCommand1(SSD1306_SET_DISPLAY_ON);                                     // Set Display On
 }
@@ -100,23 +107,28 @@ void ssd1306_setContrast(uint8_t value) {
 
 
 void ssd1306_clearAll() {
-    ssd1306_writeRawCommand3(SSD1306_SET_PAGE_ADDRESS, 0, displayHeight / 8 - 1);
-    ssd1306_writeRawCommand3(SSD1306_SET_COLUMN_ADDRESS, 0, displayWidth - 1);
-    for (uint8_t i = 0; i < displayHeight; i++) {
-        ssd1306_writeRawDataClear(displayWidth);
+    for (uint8_t i = 0; i < displayRows; i++) {
+        ssd1306_writeRawCommand1(SSD1306_SET_PAGE_START_ADDRESS | i);
+        ssd1306_writeRawDataZeros(displayWidth);
     }
-    ssd1306_writeRawCommand3(SSD1306_SET_PAGE_ADDRESS, 0, displayHeight / 8 - 1);
-    ssd1306_writeRawCommand3(SSD1306_SET_COLUMN_ADDRESS, 0, displayWidth - 1);
+        ssd1306_moveTo(0, 0);
 }
 
-void ssd1306_clearRow(uint8_t y) {
-    ssd1306_writeRawCommand3(SSD1306_SET_PAGE_ADDRESS, y, y);
-    ssd1306_writeRawCommand3(SSD1306_SET_COLUMN_ADDRESS, 0, displayWidth - 1);
-    for (uint8_t i = 0; i < displayHeight; i++) {
-        ssd1306_writeRawDataClear(displayWidth);
+void ssd1306_clearRow(uint8_t row) {
+    if (row < displayRows) {
+        ssd1306_moveTo(row, 0);
+        ssd1306_writeRawDataZeros(displayWidth);
     }
-    ssd1306_writeRawCommand3(SSD1306_SET_PAGE_ADDRESS, 0, displayHeight / 8 - 1);
-    ssd1306_writeRawCommand3(SSD1306_SET_COLUMN_ADDRESS, 0, displayWidth - 1);
+}
+
+
+void ssd1306_moveTo(const uint8_t row, const uint8_t column) {
+    if ((row < displayRows) && (column < displayColumns)) {
+        uint8_t columnEx = column << 3;
+        ssd1306_writeRawCommand1(SSD1306_SET_PAGE_START_ADDRESS | row);
+        ssd1306_writeRawCommand1(SSD1306_SET_LOWER_START_COLUMN_ADDRESS | (columnEx & 0x0F));
+        ssd1306_writeRawCommand1(SSD1306_SET_UPPER_START_COLUMN_ADDRESS | ((columnEx & 0xF0) >> 4));
+    }
 }
 
 
@@ -145,6 +157,12 @@ void ssd1306_writeText(const uint8_t* text) {
         text++;
     }
 }
+
+void ssd1306_writeTextAt(const uint8_t* value, const uint8_t row, const uint8_t column) {
+    ssd1306_moveTo(row, column);
+    ssd1306_writeText(value);
+}
+
 
 void ssd1306_writeRawCommand1(uint8_t value) {
    i2c_master_startWrite(displayAddress);
@@ -187,7 +205,7 @@ void ssd1306_writeRawData(uint8_t *value, uint8_t count) {
    i2c_master_stop();
 }
 
-void ssd1306_writeRawDataClear(uint8_t count) {
+void ssd1306_writeRawDataZeros(uint8_t count) {
    i2c_master_startWrite(displayAddress);
    i2c_master_writeByte(0x40);
    for (uint8_t i = 0; i < count; i++) {
