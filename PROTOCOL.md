@@ -36,13 +36,15 @@ specified explicitly as an escape character.
 ##### `0x07` `BEL` (`\a`) #####
 
 Clears display and moves cursor to the upper-left corner. Can only be used as
-a first character in line. Usage within text will be ignored.
+a first character in line. Usage within text will be ignored. If this is the
+only character in line, cursor will not move to the next line
 
 ##### `0x08` `BS` (`\b`) #####
 
 Backspace will cause cursor to be moved into the upper left corner. Display
 will not be cleared. Can only be used as a first character in line. Usage
-within text will be ignored.
+within text will be ignored.  If this is the only character in line, cursor
+will not move to the next line.
 
 ##### `0x09` `HT` (`\t`) #####
 
@@ -87,42 +89,64 @@ Either output will exit the command mode.
 
 #### `~` (restore defaults) ####
 
-This parameter-less command restores all setting to their default value.
+This parameter-less command restores all setting to their default value. This
+means OLED module is assumed to be on `0x3C` I2C address and display size is
+128x64.
 
-##### Example 1 (default) #####
+##### Example (default) #####
 
 |           |                                                                |
 |-----------|----------------------------------------------------------------|
 | Request:  | `~` `LF`                                                       |
 | Response: | `LF`                                                           |
-| Result:   | Display size is 128x64.                                        |
+| Result:   | Display size is 128x64 and module address is `0x3C`.           |
 
-##### Example 2 (default 128x64) #####
+
+#### `@` (set address) ####
+
+This command will set OLED module I2C address. Argument is address in
+hexadecimal form.
+
+##### Example 1 (0x3C) #####
 
 |           |                                                                |
 |-----------|----------------------------------------------------------------|
-| Request:  | `~` `A` `LF`                                                   |
+| Request:  | `@` `3` `C` `LF`                                               |
+| Response: | `LF`                                                           |
+| Result:   | OLED module is at 0x3C.                                        |
+
+
+#### `#` (set size) ####
+
+This command will set screen size. Argument is either `A` (128x64) or `B`
+(128x32).
+
+##### Example 1 (128x64) #####
+
+|           |                                                                |
+|-----------|----------------------------------------------------------------|
+| Request:  | `#` `A` `LF`                                                   |
 | Response: | `LF`                                                           |
 | Result:   | Display size is 128x64.                                        |
 
-##### Example 3 (default 128x32) #####
+##### Example 2 (128x32) #####
 
 |           |                                                                |
 |-----------|----------------------------------------------------------------|
-| Request:  | `~` `B` `LF`                                                   |
+| Request:  | `#` `B` `LF`                                                   |
 | Response: | `LF`                                                           |
 | Result:   | Display size is 128x32.                                        |
 
-##### Example 4 (invalid) #####
+##### Example 3 (invalid) #####
 
 |           |                                                                |
 |-----------|----------------------------------------------------------------|
-| Request:  | `~` `Z` `LF`                                                   |
+| Request:  | `#` `Z` `LF`                                                   |
 | Response: | `!` `LF`                                                       |
 | Result:   | No change to display size.                                     |
 
 
-##### `m` (move)  #####
+#### `m` (move)  ####
 
 Moves cursor to specified row and column. Command takes two parameters, both
 in hexadecimal format with leading 0. Either can be omitted using underscore

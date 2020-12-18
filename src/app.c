@@ -124,34 +124,47 @@ void main(void) {
                         uint8_t textOffset;
                         uint8_t textCount;
                         bool useLarge;
+                        bool moveIfEmpty;
                         switch (firstChar) {
                             case 0x07:  // BEL: clear screen
                                 ssd1306_clearAll();
                                 textOffset = offset + 1;
                                 textCount = i - offset - 1 - (potentialCrLf ? 1 : 0);
                                 useLarge = false;
+                                moveIfEmpty = false;
                                 break;
                             case 0x08:  // BS: move to origin
                                 ssd1306_moveTo(0, 0);
                                 textOffset = offset + 1;
                                 textCount = i - offset - 1 - (potentialCrLf ? 1 : 0);
                                 useLarge = false;
+                                moveIfEmpty = false;
+                                break;
+                            case 0x0B:  // VT: reserved
+                                textOffset = offset + 1;
+                                textCount = i - offset - 1 - (potentialCrLf ? 1 : 0);
+                                useLarge = false;
+                                moveIfEmpty = false;
                                 break;
                             case 0x0C:  // FF: changes to double-size font
                                 textOffset = offset + 1;
                                 textCount = i - offset - 1 - (potentialCrLf ? 1 : 0);
                                 useLarge = true;
+                                moveIfEmpty = true;
                                 break;
                             default:  // text
                                 textOffset = offset;
                                 textCount = i - offset - (potentialCrLf ? 1 : 0);
                                 useLarge = false;
+                                moveIfEmpty = true;
                                 break;
                         }
 
                         bool wasOk = processText(&InputBuffer[textOffset], textCount, useLarge);
-                        ssd1306_moveToNextRow();
-                        if (useLarge) { ssd1306_moveToNextRow(); }  //extra move for large font
+                        if ((textCount > 0) || moveIfEmpty) {
+                            ssd1306_moveToNextRow();
+                            if (useLarge) { ssd1306_moveToNextRow(); }  //extra move for large font
+                        }
 
                         if (!wasOk) {
                             if (OutputBufferCount < OUTPUT_BUFFER_MAX) {
