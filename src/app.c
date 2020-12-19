@@ -8,8 +8,8 @@
 #include "led.h"
 #include "ssd1306.h"
 
-bool processText(uint8_t* text, const uint8_t count, const bool useLargeFont);
-bool processCommand(uint8_t* text, const uint8_t count);
+bool processText(uint8_t* data, const uint8_t count, const bool useLargeFont);
+bool processCommand(uint8_t* data, const uint8_t count);
 
 #define LED_TIMEOUT       2000
 #define LED_TIMEOUT_NONE  65535
@@ -103,54 +103,54 @@ void main(void) {
                     uint8_t firstChar = InputBuffer[offset];
 
                     if (firstChar == 0x09) {  // HT: command mode
-                        uint8_t lineOffset = offset + 1;
-                        uint8_t lineCount = i - offset - 1 - (potentialCrLf ? 1 : 0);
-                        bool wasOk = processCommand(&InputBuffer[lineOffset], lineCount);
+                        uint8_t dataOffset = offset + 1;
+                        uint8_t dataCount = i - offset - 1 - (potentialCrLf ? 1 : 0);
+                        bool wasOk = processCommand(&InputBuffer[dataOffset], dataCount);
                         if (!wasOk) { OutputBufferAppend('!'); }
                         if (potentialCrLf) { OutputBufferAppend(0x0D); }  // CR was seen before LF
                         OutputBufferAppend(0x0A);
                     } else {
-                        uint8_t textOffset;
-                        uint8_t textCount;
+                        uint8_t dataOffset;
+                        uint8_t dataCount;
                         bool useLarge;
                         bool moveIfEmpty;
                         switch (firstChar) {
                             case 0x07:  // BEL: clear screen
                                 ssd1306_clearAll();
-                                textOffset = offset + 1;
-                                textCount = i - offset - 1 - (potentialCrLf ? 1 : 0);
+                                dataOffset = offset + 1;
+                                dataCount = i - offset - 1 - (potentialCrLf ? 1 : 0);
                                 useLarge = false;
                                 moveIfEmpty = false;
                                 break;
                             case 0x08:  // BS: move to origin
                                 ssd1306_moveTo(0, 0);
-                                textOffset = offset + 1;
-                                textCount = i - offset - 1 - (potentialCrLf ? 1 : 0);
+                                dataOffset = offset + 1;
+                                dataCount = i - offset - 1 - (potentialCrLf ? 1 : 0);
                                 useLarge = false;
                                 moveIfEmpty = false;
                                 break;
                             case 0x0B:  // VT: reserved
-                                textOffset = offset + 1;
-                                textCount = i - offset - 1 - (potentialCrLf ? 1 : 0);
+                                dataOffset = offset + 1;
+                                dataCount = i - offset - 1 - (potentialCrLf ? 1 : 0);
                                 useLarge = false;
                                 moveIfEmpty = false;
                                 break;
                             case 0x0C:  // FF: changes to double-size font
-                                textOffset = offset + 1;
-                                textCount = i - offset - 1 - (potentialCrLf ? 1 : 0);
+                                dataOffset = offset + 1;
+                                dataCount = i - offset - 1 - (potentialCrLf ? 1 : 0);
                                 useLarge = true;
                                 moveIfEmpty = true;
                                 break;
                             default:  // text
-                                textOffset = offset;
-                                textCount = i - offset - (potentialCrLf ? 1 : 0);
+                                dataOffset = offset;
+                                dataCount = i - offset - (potentialCrLf ? 1 : 0);
                                 useLarge = false;
                                 moveIfEmpty = true;
                                 break;
                         }
 
-                        bool wasOk = processText(&InputBuffer[textOffset], textCount, useLarge);
-                        if ((textCount > 0) || moveIfEmpty) {
+                        bool wasOk = processText(&InputBuffer[dataOffset], dataCount, useLarge);
+                        if ((dataCount > 0) || moveIfEmpty) {
                             ssd1306_moveToNextRow();
                             if (useLarge) { ssd1306_moveToNextRow(); }  //extra move for large font
                         }
@@ -181,10 +181,10 @@ void __interrupt() SYS_InterruptHigh(void) {
 }
 
 
-bool processText(uint8_t* text, const uint8_t count, const bool useLargeFont) {
+bool processText(uint8_t* data, const uint8_t count, const bool useLargeFont) {
     bool ok = true;
     for (uint8_t i = 0; i < count; i++) {
-        uint8_t value = *text;
+        uint8_t value = *data;
         if (value >= 32) {
             if (useLargeFont) {
                 ok = ok && ssd1306_writeLargeCharacter(value);
@@ -194,11 +194,11 @@ bool processText(uint8_t* text, const uint8_t count, const bool useLargeFont) {
         } else {
             ok = false;
         }
-        text++;
+        data++;
     }
     return ok;
 }
 
-bool processCommand(uint8_t* text, const uint8_t count) {
+bool processCommand(uint8_t* data, const uint8_t count) {
     return false;
 }
