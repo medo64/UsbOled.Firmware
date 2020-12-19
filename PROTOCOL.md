@@ -183,6 +183,29 @@ bytes in length, with each byte describing one column of data.
 | Result:   | Draws box with one empty space around each side.               |
 
 
+#### `C` (large custom character)  ####
+
+Draws a custom character based on raw data. Data has to be hexadecimal, 16
+bytes in length, with each byte describing one column of data. Top 8 pixels
+are drawn first.
+
+##### Example 1 (diagonal line) #####
+
+|           |                                                                |
+|-----------|----------------------------------------------------------------|
+| Request:  | `C030C30C00000000000000000030C30C0` `LF`                        |
+| Response: | `LF`                                                           |
+| Result:   | Draws line from upper-left to lower-right.                     |
+
+##### Example 2 (box) #####
+
+|           |                                                                |
+|-----------|----------------------------------------------------------------|
+| Request:  | `C00FE02020202FE00007F404040407F00` `LF`                       |
+| Response: | `LF`                                                           |
+| Result:   | Draws box with one empty space around each side.               |
+
+
 #### `m` (move)  ####
 
 Moves cursor to specified row and column. Command takes two parameters, both

@@ -272,6 +272,17 @@ bool processCommand(const uint8_t* data, const uint8_t count) {
             }
         }
 
+        case 'C': {
+            if (count == 33) {
+                uint8_t customCharData[16];
+                for (uint8_t i = 0; i < 16; i++) {
+                    if (!hexToNibble(*++data, &customCharData[i])) { return false; }
+                    if (!hexToNibble(*++data, &customCharData[i])) { return false; }
+                }
+                return ssd1306_drawLargeCharacter(&customCharData[0], 16);
+            }
+        }
+
         case 'm': {
             if (count == 3) {
                 uint8_t row = 0;
