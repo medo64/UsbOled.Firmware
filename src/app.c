@@ -128,17 +128,17 @@ void main(void) {
                                 useLarge = false;
                                 moveIfEmpty = false;
                                 break;
-                            case 0x0B:  // VT: reserved
-                                dataOffset = offset + 1;
-                                dataCount = i - offset - 1 - (potentialCrLf ? 1 : 0);
-                                useLarge = false;
-                                moveIfEmpty = false;
-                                break;
-                            case 0x0C:  // FF: changes to double-size font
+                            case 0x0B:  // VT: double-size font
                                 dataOffset = offset + 1;
                                 dataCount = i - offset - 1 - (potentialCrLf ? 1 : 0);
                                 useLarge = true;
                                 moveIfEmpty = true;
+                                break;
+                            case 0x0C:  // FF: reserved
+                                dataOffset = offset + 1;
+                                dataCount = i - offset - 1 - (potentialCrLf ? 1 : 0);
+                                useLarge = false;
+                                moveIfEmpty = false;
                                 break;
                             default:  // text
                                 dataOffset = offset;

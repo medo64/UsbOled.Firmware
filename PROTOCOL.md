@@ -62,12 +62,12 @@ no cursor movement will occur.
 
 ##### `0x0B` `VT` (`\v`) #####
 
-Reserved for future use.
+Text following it will use double-height font (8x16). Can only be used as a
+first character in line. Usage within text will be ignored.
 
 ##### `0x0C` `FF` (`\f`) #####
 
-Text following it will use double-height font (8x16). Can only be used as a
-first character in line. Usage within text will be ignored.
+Reserved for future use.
 
 ##### `0x0D` `CR` (`\r`) #####
 
