@@ -146,6 +146,21 @@ This command will set screen size. Argument is either `A` (128x64) or `B`
 | Result:   | No change to display size.                                     |
 
 
+#### `?` (print settings) ####
+
+This parameter will print current setting values separated by space. Screen
+size will be prefixed by pound sign (`#`) and I2C address will be prefixed by
+at sign (`@`).
+
+##### Example (default) #####
+
+|           |                                                                |
+|-----------|----------------------------------------------------------------|
+| Request:  | `?` `LF`                                                       |
+| Response: | `@` `3` `C` ` ` `#` `A` `LF`                                   |
+| Result:   | Display size is 128x64 and module address is `0x3C`.           |
+
+
 #### `m` (move)  ####
 
 Moves cursor to specified row and column. Command takes two parameters, both
