@@ -164,9 +164,9 @@ at sign (`@`).
 #### `m` (move)  ####
 
 Moves cursor to specified row and column. Command takes two parameters, both
-in hexadecimal format with leading 0. Either can be omitted using underscore
-character (`_`). Rows are always expressed in 8x8 units (even when 8x16 font
-is used).
+in hexadecimal format with leading 0. Both rows and columns start from 1. Move
+for either can be omitted using `00` in the place of value. Rows are always
+expressed in 8x8 units (even when 8x16 font is used).
 
 ##### Example 1 (row 2, column 6) #####
 
@@ -180,7 +180,7 @@ is used).
 
 |           |                                                                |
 |-----------|----------------------------------------------------------------|
-| Request:  | `m__0C` `LF`                                                   |
+| Request:  | `m000C` `LF`                                                   |
 | Response: | `LF`                                                           |
 | Result:   | Moves cursor to column 12.                                     |
 
@@ -190,12 +190,12 @@ is used).
 |-----------|----------------------------------------------------------------|
 | Request:  | `m03` `LF`                                                     |
 | Response: | `LF`                                                           |
-| Result:   | Moves cursor to row 3 without changing column.                 |
+| Result:   | Moves cursor to row 3, column 1.                               |
 
 ##### Example 4 (invalid) #####
 
 |           |                                                                |
 |-----------|----------------------------------------------------------------|
-| Request:  | `m08` `LF`                                                     |
+| Request:  | `m09` `LF`                                                     |
 | Response: | `!` `LF`                                                       |
 | Result:   | No action is taken since row is outside of range.              |

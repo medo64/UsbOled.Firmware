@@ -122,7 +122,7 @@ void main(void) {
                                 moveIfEmpty = false;
                                 break;
                             case 0x08:  // BS: move to origin
-                                ssd1306_moveTo(0, 0);
+                                ssd1306_moveTo(1, 1);
                                 dataOffset = offset + 1;
                                 dataCount = i - offset - 1 - (potentialCrLf ? 1 : 0);
                                 useLarge = false;
@@ -184,8 +184,9 @@ void initOled(void) {
     ssd1306_init(settings_getOledI2CAddress(), 128, settings_getDisplayHeight());
     ssd1306_clearAll();
 
-    ssd1306_writeLargeText("USB OLED");
-    ssd1306_writeTextAt("medo64.com", 2, 0);
+    ssd1306_writeLargeTextAt("USB OLED", 1, 5);
+    ssd1306_writeTextAt("medo64.com", 3, 4);
+    ssd1306_moveToNextRow();
 }
 
 

@@ -116,33 +116,40 @@ void ssd1306_clearAll() {
     ssd1306_moveTo(0, 0);
 }
 
-void ssd1306_clearRow(const uint8_t row) {
-    if (row < displayRows) {
-        ssd1306_moveTo(row, 0);
+bool ssd1306_clearRow(const uint8_t row) {
+    if (ssd1306_moveTo(row, 1)) {
         ssd1306_writeRawDataZeros(displayWidth);
+        return true;
     }
+    return false;
 }
 
 
-void ssd1306_moveTo(const uint8_t row, const uint8_t column) {
-    if ((row < displayRows) && (column < displayColumns)) {
-        uint8_t columnLow = (column << 3) & 0x0F;
-        uint8_t columnHigh = (column >> 1) & 0x0F;
-        ssd1306_writeRawCommand1(SSD1306_SET_PAGE_START_ADDRESS | row);
-        ssd1306_writeRawCommand1(SSD1306_SET_LOWER_START_COLUMN_ADDRESS | columnLow);
-        ssd1306_writeRawCommand1(SSD1306_SET_UPPER_START_COLUMN_ADDRESS | columnHigh);
-        currentRow = row;
-        currentColumn = column;
+bool ssd1306_moveTo(const uint8_t row, const uint8_t column) {
+    if ((row <= displayRows) && (column <= displayColumns)) {
+        uint8_t newRow = (row == 0) ? currentRow : row - 1;
+        uint8_t newColumn = (column == 0) ? currentColumn : column - 1;
+        uint8_t newColumnL = (newColumn << 3) & 0x0F;
+        uint8_t newColumnH = (newColumn >> 1) & 0x0F;
+        ssd1306_writeRawCommand1(SSD1306_SET_PAGE_START_ADDRESS | newRow);
+        ssd1306_writeRawCommand1(SSD1306_SET_LOWER_START_COLUMN_ADDRESS | newColumnL);
+        ssd1306_writeRawCommand1(SSD1306_SET_UPPER_START_COLUMN_ADDRESS | newColumnH);
+        currentRow = newRow;
+        currentColumn = newColumn;
+        return true;
     }
+    return false;
 }
 
-void ssd1306_moveToNextRow() {
-    uint8_t nextRow = (currentRow < displayRows - 1) ? currentRow + 1 : currentRow;
-    ssd1306_writeRawCommand1(SSD1306_SET_PAGE_START_ADDRESS | nextRow);
+bool ssd1306_moveToNextRow() {
+    if (currentRow >= displayRows - 1) { return false; }
+    uint8_t newRow = currentRow + 1;
+    ssd1306_writeRawCommand1(SSD1306_SET_PAGE_START_ADDRESS | newRow);
     ssd1306_writeRawCommand1(SSD1306_SET_LOWER_START_COLUMN_ADDRESS);
     ssd1306_writeRawCommand1(SSD1306_SET_UPPER_START_COLUMN_ADDRESS);
-    currentRow = nextRow;
+    currentRow = newRow;
     currentColumn = 0;
+    return true;
 }
 
 
@@ -163,19 +170,18 @@ bool ssd1306_writeCharacter(const uint8_t value) {
     return true;
 }
 
-void ssd1306_writeText(const uint8_t* text) {
+bool ssd1306_writeText(const uint8_t* text) {
+    bool ok = true;
     while (*text != 0) {
-        ssd1306_writeCharacter(*text);
+        ok &= ssd1306_writeCharacter(*text);
         text++;
     }
+    return ok;
 }
 
-void ssd1306_writeTextAt(const uint8_t* text, const uint8_t row, const uint8_t column) {
-    ssd1306_moveTo(row, column);
-    while (*text != 0) {
-        ssd1306_writeCharacter(*text);
-        text++;
-    }
+bool ssd1306_writeTextAt(const uint8_t* text, const uint8_t row, const uint8_t column) {
+    if (!ssd1306_moveTo(row, column)) { return false; }
+    return ssd1306_writeText(text);
 }
 
 
@@ -207,19 +213,18 @@ bool ssd1306_writeLargeCharacter(const uint8_t value) {
     return true;
 }
 
-void ssd1306_writeLargeText(const uint8_t* text) {
+bool ssd1306_writeLargeText(const uint8_t* text) {
+    bool ok = true;
     while (*text != 0) {
-        ssd1306_writeLargeCharacter(*text);
+        ok &= ssd1306_writeLargeCharacter(*text);
         text++;
     }
+    return ok;
 }
 
-void ssd1306_writeLargeTextAt(const uint8_t* text, const uint8_t row, const uint8_t column) {
-    ssd1306_moveTo(row, column);
-    while (*text != 0) {
-        ssd1306_writeLargeCharacter(*text);
-        text++;
-    }
+bool ssd1306_writeLargeTextAt(const uint8_t* text, const uint8_t row, const uint8_t column) {
+    if (!ssd1306_moveTo(row, column)) { return false; }
+    return ssd1306_writeLargeText(text);
 }
 
 
