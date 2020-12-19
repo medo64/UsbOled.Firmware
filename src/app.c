@@ -113,31 +113,41 @@ void main(void) {
                         uint8_t dataCount = i - offset - (potentialCrLf ? 1 : 0);
                         bool useLarge = false;
                         bool moveIfEmpty = true;
-                        switch (firstChar) {
-                            case 0x07:  // BEL: clear screen
-                                ssd1306_clearAll();
-                                dataOffset += 1;
-                                dataCount -= 1;
-                                moveIfEmpty = false;
-                                break;
+                        bool allowSpecialChar = true;
+                        while (allowSpecialChar) {
+                            switch (firstChar) {
+                                case 0x07:  // BEL: clear screen
+                                    ssd1306_clearAll();
+                                    dataOffset += 1;
+                                    dataCount -= 1;
+                                    moveIfEmpty = false;
+                                    break;
 
-                            case 0x08:  // BS: move to origin
-                                ssd1306_moveTo(1, 1);
-                                dataOffset += 1;
-                                dataCount -= 1;
-                                moveIfEmpty = false;
-                                break;
+                                case 0x08:  // BS: move to origin
+                                    ssd1306_moveTo(1, 1);
+                                    dataOffset += 1;
+                                    dataCount -= 1;
+                                    moveIfEmpty = false;
+                                    break;
 
-                            case 0x0B:  // VT: double-size font
-                                dataOffset += 1;
-                                dataCount -= 1;
-                                useLarge = true;
-                                break;
+                                case 0x0B:  // VT: double-size font
+                                    dataOffset += 1;
+                                    dataCount -= 1;
+                                    useLarge = true;
+                                    break;
 
-                            case 0x0C:  // FF: reserved
-                                dataOffset += 1;
-                                dataCount -= 1;
-                                break;
+                                case 0x0C:  // FF: reserved
+                                    dataOffset += 1;
+                                    dataCount -= 1;
+                                    allowSpecialChar = false;
+                                    break;
+
+                                default:
+                                    allowSpecialChar = false;  // special characters can only be at the beginning of line
+                                    break;
+                            }
+
+                            firstChar = InputBuffer[dataOffset];
                         }
 
                         bool wasOk = processText(&InputBuffer[dataOffset], dataCount, useLarge);
