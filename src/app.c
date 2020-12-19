@@ -216,7 +216,7 @@ bool processCommand(uint8_t* data, const uint8_t count) {
 
         case '@': {  // select address
             if (count == 3) {
-                uint8_t address = 0;
+                uint8_t address;
                 if (!hexToNibble(*++data, &address)) { return false; }
                 if (!hexToNibble(*++data, &address)) { return false; }
                 settings_setOledI2CAddress(address);
@@ -258,7 +258,19 @@ bool processCommand(uint8_t* data, const uint8_t count) {
         }
 
         case 'm': {
-            return false;
+            if (count == 3) {
+                uint8_t row = 0;
+                if (!hexToNibble(*++data, &row)) { return false; }
+                if (!hexToNibble(*++data, &row)) { return false; }
+                return ssd1306_moveTo(row, 1);
+            } else if (count == 5) {
+                uint8_t row, column;
+                if (!hexToNibble(*++data, &row)) { return false; }
+                if (!hexToNibble(*++data, &row)) { return false; }
+                if (!hexToNibble(*++data, &column)) { return false; }
+                if (!hexToNibble(*++data, &column)) { return false; }
+                return ssd1306_moveTo(row, column);
+            }
         }
     }
 
