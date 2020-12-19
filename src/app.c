@@ -162,13 +162,12 @@ void main(void) {
                     }
 
                     offset = i + 1;  // set the next start
-
                 }
 
                 potentialCrLf = (value == 0x0D);  // checked when LF is matched
             }
 
-            InputBufferCount =- offset;
+            InputBufferCount -= offset;
             buffer_copy(&InputBuffer[0], &InputBuffer[offset], InputBufferCount);  // move unused portion of buffer to the start
         }
     }
