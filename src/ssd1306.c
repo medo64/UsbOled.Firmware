@@ -113,7 +113,7 @@ void ssd1306_clearAll() {
         ssd1306_writeRawCommand1(SSD1306_SET_PAGE_START_ADDRESS | i);
         ssd1306_writeRawDataZeros(displayWidth);
     }
-    ssd1306_moveTo(0, 0);
+    ssd1306_moveTo(1, 1);
 }
 
 bool ssd1306_clearRow(const uint8_t row) {
