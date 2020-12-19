@@ -109,42 +109,34 @@ void main(void) {
                         if (potentialCrLf) { OutputBufferAppend(0x0D); }  // CR was seen before LF
                         OutputBufferAppend(0x0A);
                     } else {
-                        uint8_t dataOffset;
-                        uint8_t dataCount;
-                        bool useLarge;
-                        bool moveIfEmpty;
+                        uint8_t dataOffset = offset;
+                        uint8_t dataCount = i - offset - (potentialCrLf ? 1 : 0);
+                        bool useLarge = false;
+                        bool moveIfEmpty = true;
                         switch (firstChar) {
                             case 0x07:  // BEL: clear screen
                                 ssd1306_clearAll();
-                                dataOffset = offset + 1;
-                                dataCount = i - offset - 1 - (potentialCrLf ? 1 : 0);
-                                useLarge = false;
+                                dataOffset += 1;
+                                dataCount -= 1;
                                 moveIfEmpty = false;
                                 break;
+
                             case 0x08:  // BS: move to origin
                                 ssd1306_moveTo(1, 1);
-                                dataOffset = offset + 1;
-                                dataCount = i - offset - 1 - (potentialCrLf ? 1 : 0);
-                                useLarge = false;
+                                dataOffset += 1;
+                                dataCount -= 1;
                                 moveIfEmpty = false;
                                 break;
+
                             case 0x0B:  // VT: double-size font
-                                dataOffset = offset + 1;
-                                dataCount = i - offset - 1 - (potentialCrLf ? 1 : 0);
+                                dataOffset += 1;
+                                dataCount -= 1;
                                 useLarge = true;
-                                moveIfEmpty = true;
                                 break;
+
                             case 0x0C:  // FF: reserved
-                                dataOffset = offset + 1;
-                                dataCount = i - offset - 1 - (potentialCrLf ? 1 : 0);
-                                useLarge = false;
-                                moveIfEmpty = false;
-                                break;
-                            default:  // text
-                                dataOffset = offset;
-                                dataCount = i - offset - (potentialCrLf ? 1 : 0);
-                                useLarge = false;
-                                moveIfEmpty = true;
+                                dataOffset += 1;
+                                dataCount -= 1;
                                 break;
                         }
 
