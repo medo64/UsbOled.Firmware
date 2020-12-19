@@ -22,6 +22,7 @@
       <itemPath>i2c_master.h</itemPath>
       <itemPath>system.h</itemPath>
       <itemPath>buffer.h</itemPath>
+      <itemPath>settings.h</itemPath>
     </logicalFolder>
     <logicalFolder name="LinkerScript"
                    displayName="Linker Files"
@@ -42,6 +43,7 @@
       <itemPath>i2c_master.c</itemPath>
       <itemPath>system.c</itemPath>
       <itemPath>buffer.c</itemPath>
+      <itemPath>settings.c</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"

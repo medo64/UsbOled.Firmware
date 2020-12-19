@@ -3,6 +3,7 @@
 #include "Microchip/usb_device.h"
 #include "Microchip/usb_device_cdc.h"
 #include "buffer.h"
+#include "settings.h"
 #include "system.h"
 #include "led.h"
 #include "ssd1306.h"
@@ -20,7 +21,8 @@ void main(void) {
 
     led_activity_on();
 
-    ssd1306_init(0x3C, 128, 64);
+    settings_init();
+    ssd1306_init(settings_getOledI2CAddress(), 128, settings_getDisplayHeight());
     ssd1306_clearAll();
 
     ssd1306_writeLargeText("USB OLED");
