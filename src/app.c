@@ -106,22 +106,9 @@ void main(void) {
                         uint8_t lineOffset = offset + 1;
                         uint8_t lineCount = i - offset - 1 - (potentialCrLf ? 1 : 0);
                         bool wasOk = processCommand(&InputBuffer[lineOffset], lineCount);
-                        if (!wasOk) {
-                            if (OutputBufferCount < OUTPUT_BUFFER_MAX) {
-                                OutputBuffer[OutputBufferCount] = '!';
-                                OutputBufferCount++;
-                            }
-                        }
-                        if (potentialCrLf) {  // CR was seen before LF
-                            if (OutputBufferCount < OUTPUT_BUFFER_MAX) {
-                                OutputBuffer[OutputBufferCount] = 0x0D;
-                                OutputBufferCount++;
-                            }
-                        }
-                        if (OutputBufferCount < OUTPUT_BUFFER_MAX) {
-                            OutputBuffer[OutputBufferCount] = 0x0A;
-                            OutputBufferCount++;
-                        }
+                        if (!wasOk) { OutputBufferAppend('!'); }
+                        if (potentialCrLf) { OutputBufferAppend(0x0D); }  // CR was seen before LF
+                        OutputBufferAppend(0x0A);
                     } else {
                         uint8_t textOffset;
                         uint8_t textCount;
@@ -168,23 +155,9 @@ void main(void) {
                             if (useLarge) { ssd1306_moveToNextRow(); }  //extra move for large font
                         }
 
-                        if (!wasOk) {
-                            if (OutputBufferCount < OUTPUT_BUFFER_MAX) {
-                                OutputBuffer[OutputBufferCount] = '!';
-                                OutputBufferCount++;
-                            }
-                        }
-
-                        if (potentialCrLf) {  // CR was seen before LF
-                            if (OutputBufferCount < OUTPUT_BUFFER_MAX) {
-                                OutputBuffer[OutputBufferCount] = 0x0D;
-                                OutputBufferCount++;
-                            }
-                        }
-                        if (OutputBufferCount < OUTPUT_BUFFER_MAX) {
-                            OutputBuffer[OutputBufferCount] = 0x0A;
-                            OutputBufferCount++;
-                        }
+                        if (!wasOk) { OutputBufferAppend('!'); }
+                        if (potentialCrLf) { OutputBufferAppend(0x0D); }  // CR was seen before LF
+                        OutputBufferAppend(0x0A);
                     }
 
                     offset = i + 1;  // set the next start

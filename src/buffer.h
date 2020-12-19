@@ -15,6 +15,7 @@ bool InputBufferCorrupted = false;
 uint8_t OutputBuffer[OUTPUT_BUFFER_MAX];
 uint8_t OutputBufferCount = 0;
 
+#define OutputBufferAppend(X)  if (OutputBufferCount < OUTPUT_BUFFER_MAX) { OutputBuffer[OutputBufferCount] = (X); OutputBufferCount++; }
 
 // USB read buffer
 #define USB_READ_BUFFER_MAX  CDC_DATA_IN_EP_SIZE
