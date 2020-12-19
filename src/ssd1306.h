@@ -31,6 +31,10 @@ void ssd1306_clearAll();
 bool ssd1306_clearRow(const uint8_t row);
 
 
+/** Writes custom 8x8 character at the current position */
+bool ssd1306_drawCharacter(const uint8_t* data, const uint8_t count);
+
+
 /** Writes 8x8 character at the current position */
 bool ssd1306_writeCharacter(const uint8_t value);
 

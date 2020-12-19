@@ -3,6 +3,15 @@
 
 #include "Microchip/usb_config.h"
 
+// USB read buffer
+#define USB_READ_BUFFER_MAX  CDC_DATA_IN_EP_SIZE
+uint8_t UsbReadBuffer[USB_READ_BUFFER_MAX];
+
+// USB write buffer
+#define USB_WRITE_BUFFER_MAX  CDC_DATA_OUT_EP_SIZE
+uint8_t UsbWriteBuffer[USB_WRITE_BUFFER_MAX];
+
+
 // Input buffer - max is maximum line length
 #define INPUT_BUFFER_MAX  192
 uint8_t InputBuffer[INPUT_BUFFER_MAX];
@@ -16,14 +25,6 @@ uint8_t OutputBuffer[OUTPUT_BUFFER_MAX];
 uint8_t OutputBufferCount = 0;
 
 #define OutputBufferAppend(X)  if (OutputBufferCount < OUTPUT_BUFFER_MAX) { OutputBuffer[OutputBufferCount] = (X); OutputBufferCount++; }
-
-// USB read buffer
-#define USB_READ_BUFFER_MAX  CDC_DATA_IN_EP_SIZE
-uint8_t UsbReadBuffer[USB_READ_BUFFER_MAX];
-
-// USB write buffer
-#define USB_WRITE_BUFFER_MAX  CDC_DATA_OUT_EP_SIZE
-uint8_t UsbWriteBuffer[USB_WRITE_BUFFER_MAX];
 
 
 void buffer_copy(uint8_t* destination, uint8_t* source, const uint8_t count);

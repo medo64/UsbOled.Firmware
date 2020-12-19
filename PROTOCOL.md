@@ -111,7 +111,7 @@ hexadecimal form.
 
 |           |                                                                |
 |-----------|----------------------------------------------------------------|
-| Request:  | `@` `3` `C` `LF`                                               |
+| Request:  | `@3C` `LF`                                                     |
 | Response: | `LF`                                                           |
 | Result:   | OLED module is at 0x3C.                                        |
 
@@ -125,7 +125,7 @@ This command will set screen size. Argument is either `A` (128x64) or `B`
 
 |           |                                                                |
 |-----------|----------------------------------------------------------------|
-| Request:  | `#` `A` `LF`                                                   |
+| Request:  | `#A` `LF`                                                      |
 | Response: | `LF`                                                           |
 | Result:   | Display size is 128x64.                                        |
 
@@ -133,7 +133,7 @@ This command will set screen size. Argument is either `A` (128x64) or `B`
 
 |           |                                                                |
 |-----------|----------------------------------------------------------------|
-| Request:  | `#` `B` `LF`                                                   |
+| Request:  | `#B` `LF`                                                      |
 | Response: | `LF`                                                           |
 | Result:   | Display size is 128x32.                                        |
 
@@ -141,7 +141,7 @@ This command will set screen size. Argument is either `A` (128x64) or `B`
 
 |           |                                                                |
 |-----------|----------------------------------------------------------------|
-| Request:  | `#` `Z` `LF`                                                   |
+| Request:  | `#Z` `LF`                                                      |
 | Response: | `!` `LF`                                                       |
 | Result:   | No change to display size.                                     |
 
@@ -157,8 +157,30 @@ at sign (`@`).
 |           |                                                                |
 |-----------|----------------------------------------------------------------|
 | Request:  | `?` `LF`                                                       |
-| Response: | `@` `3` `C` ` ` `#` `A` `LF`                                   |
+| Response: | `@C #A` `LF`                                                   |
 | Result:   | Display size is 128x64 and module address is `0x3C`.           |
+
+
+#### `c` (custom character)  ####
+
+Draws a custom character based on raw data. Data has to be hexadecimal, 8
+bytes in length, with each byte describing one column of data.
+
+##### Example 1 (diagonal line) #####
+
+|           |                                                                |
+|-----------|----------------------------------------------------------------|
+| Request:  | `c0102040810204080` `LF`                                       |
+| Response: | `LF`                                                           |
+| Result:   | Draws line from upper-left to lower-right.                     |
+
+##### Example 2 (box) #####
+
+|           |                                                                |
+|-----------|----------------------------------------------------------------|
+| Request:  | `c007E424242427E00` `LF`                                       |
+| Response: | `LF`                                                           |
+| Result:   | Draws box with one empty space around each side.               |
 
 
 #### `m` (move)  ####

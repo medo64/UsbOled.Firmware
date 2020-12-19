@@ -153,6 +153,17 @@ bool ssd1306_moveToNextRow() {
 }
 
 
+bool ssd1306_drawCharacter(const uint8_t* data, const uint8_t count) {
+    if (currentColumn >= displayColumns) { return false; }
+    if (count != 8) { return false; }  // must be 8 pixels wide
+
+    ssd1306_writeRawData(data, 8);
+    currentColumn++;
+
+    return true;
+}
+
+
 bool ssd1306_writeCharacter(const uint8_t value) {
     if (currentColumn >= displayColumns) { return false; }
 

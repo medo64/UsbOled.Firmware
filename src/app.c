@@ -8,8 +8,8 @@
 #include "led.h"
 #include "ssd1306.h"
 
-bool processText(uint8_t* data, const uint8_t count, const bool useLargeFont);
-bool processCommand(uint8_t* data, const uint8_t count);
+bool processText(const uint8_t* data, const uint8_t count, const bool useLargeFont);
+bool processCommand(const uint8_t* data, const uint8_t count);
 void initOled(void);
 uint8_t nibbleToHex(const uint8_t value);
 bool hexToNibble(const uint8_t hex, uint8_t* nibble);
@@ -95,6 +95,7 @@ void main(void) {
         if (InputBufferCount > 0) {
             uint8_t offset = 0;
             bool potentialCrLf = false;
+
             for (uint8_t i = 0; i < InputBufferCount; i++) {  // find EOLs
                 uint8_t value = InputBuffer[i];
 
@@ -167,8 +168,10 @@ void main(void) {
                 potentialCrLf = (value == 0x0D);  // checked when LF is matched
             }
 
-            InputBufferCount -= offset;
-            buffer_copy(&InputBuffer[0], &InputBuffer[offset], InputBufferCount);  // move unused portion of buffer to the start
+            if (offset > 0) {  // move unused portion of buffer to the start
+                InputBufferCount -= offset;
+                buffer_copy(&InputBuffer[0], &InputBuffer[offset], InputBufferCount);
+            }
         }
     }
 }
@@ -191,7 +194,7 @@ void initOled(void) {
 }
 
 
-bool processText(uint8_t* data, const uint8_t count, const bool useLargeFont) {
+bool processText(const uint8_t* data, const uint8_t count, const bool useLargeFont) {
     bool ok = true;
     for (uint8_t i = 0; i < count; i++) {
         uint8_t value = *data;
@@ -209,7 +212,7 @@ bool processText(uint8_t* data, const uint8_t count, const bool useLargeFont) {
     return ok;
 }
 
-bool processCommand(uint8_t* data, const uint8_t count) {
+bool processCommand(const uint8_t* data, const uint8_t count) {
     switch (*data) {
         case '~': {  // defaults
             return false;
@@ -255,6 +258,17 @@ bool processCommand(uint8_t* data, const uint8_t count) {
                     default: OutputBufferAppend('A'); break;
                 }
                 return true;
+            }
+        }
+
+        case 'c': {
+            if (count == 17) {
+                uint8_t customCharData[8];
+                for (uint8_t i = 0; i < 8; i++) {
+                    if (!hexToNibble(*++data, &customCharData[i])) { return false; }
+                    if (!hexToNibble(*++data, &customCharData[i])) { return false; }
+                }
+                return ssd1306_drawCharacter(&customCharData[0], 8);
             }
         }
 
