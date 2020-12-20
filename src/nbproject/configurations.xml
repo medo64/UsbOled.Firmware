@@ -23,6 +23,7 @@
       <itemPath>system.h</itemPath>
       <itemPath>buffer.h</itemPath>
       <itemPath>settings.h</itemPath>
+      <itemPath>graph.h</itemPath>
     </logicalFolder>
     <logicalFolder name="LinkerScript"
                    displayName="Linker Files"
@@ -44,6 +45,7 @@
       <itemPath>system.c</itemPath>
       <itemPath>buffer.c</itemPath>
       <itemPath>settings.c</itemPath>
+      <itemPath>graph.c</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"

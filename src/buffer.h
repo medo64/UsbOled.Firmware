@@ -24,7 +24,7 @@ bool InputBufferCorrupted = false;
 uint8_t OutputBuffer[OUTPUT_BUFFER_MAX];
 uint8_t OutputBufferCount = 0;
 
-#define OutputBufferAppend(X)  if (OutputBufferCount < OUTPUT_BUFFER_MAX) { OutputBuffer[OutputBufferCount] = (X); OutputBufferCount++; }
+#define OutputBufferAppend(X)  OutputBuffer[OutputBufferCount] = (X); OutputBufferCount++;
 
 
 void buffer_copy(uint8_t* destination, uint8_t* source, const uint8_t count);

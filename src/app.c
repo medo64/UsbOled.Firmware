@@ -3,10 +3,11 @@
 #include "Microchip/usb_device.h"
 #include "Microchip/usb_device_cdc.h"
 #include "buffer.h"
-#include "settings.h"
-#include "system.h"
+#include "graph.h"
 #include "led.h"
+#include "settings.h"
 #include "ssd1306.h"
+#include "system.h"
 
 bool processText(const uint8_t* data, const uint8_t count, const bool useLargeFont);
 bool processCommand(const uint8_t* data, const uint8_t count);
@@ -100,67 +101,68 @@ void main(void) {
                 uint8_t value = InputBuffer[i];
 
                 if (value == 0x0A) {  // start line processing
-                    uint8_t firstChar = InputBuffer[offset];
+                    uint8_t* dataPtr = &InputBuffer[offset];
+                    uint8_t dataCount = i - offset - (potentialCrLf ? 1 : 0);
+                    bool wasOk;
 
-                    if (firstChar == 0x09) {  // HT: command mode
-                        uint8_t dataOffset = offset + 1;
-                        uint8_t dataCount = i - offset - 1 - (potentialCrLf ? 1 : 0);
-                        bool wasOk = processCommand(&InputBuffer[dataOffset], dataCount);
-                        if (!wasOk) { OutputBufferAppend('!'); }
-                        if (potentialCrLf) { OutputBufferAppend(0x0D); }  // CR was seen before LF
-                        OutputBufferAppend(0x0A);
+                    if (*dataPtr == 0x09) {  // HT: command mode
+                        dataPtr++;
+                        dataCount--;
+                        wasOk = processCommand(dataPtr, dataCount);
                     } else {
-                        uint8_t dataOffset = offset;
-                        uint8_t dataCount = i - offset - (potentialCrLf ? 1 : 0);
                         bool useLarge = false;
                         bool moveIfEmpty = true;
-                        bool allowSpecialChar = true;
-                        while (allowSpecialChar) {
-                            switch (firstChar) {
+                        bool processingPrefixes = true;
+                        uint8_t graphWidth = 0;
+                        while (processingPrefixes) {
+                            switch (*dataPtr) {
                                 case 0x07:  // BEL: clear screen
                                     ssd1306_clearAll();
-                                    dataOffset += 1;
-                                    dataCount -= 1;
+                                    dataPtr++;
+                                    dataCount--;
                                     moveIfEmpty = false;
                                     break;
 
                                 case 0x08:  // BS: move to origin
                                     ssd1306_moveTo(1, 1);
-                                    dataOffset += 1;
-                                    dataCount -= 1;
+                                    dataPtr++;
+                                    dataCount--;
                                     moveIfEmpty = false;
                                     break;
 
                                 case 0x0B:  // VT: double-size font
-                                    dataOffset += 1;
-                                    dataCount -= 1;
+                                    dataPtr++;
+                                    dataCount--;
                                     useLarge = true;
                                     break;
 
-                                case 0x0C:  // FF: reserved
-                                    dataOffset += 1;
-                                    dataCount -= 1;
-                                    allowSpecialChar = false;
+                                case 0x0C:  // FF: draw graph
+                                    while (*dataPtr == 0x0C) {
+                                        if (dataCount == 0) { break; }
+                                        dataPtr++;
+                                        dataCount--;
+                                        graphWidth += 1;
+                                    }
+                                    wasOk = graph_draw(graphWidth, false);
+                                    graphWidth = 0;
                                     break;
 
                                 default:
-                                    allowSpecialChar = false;  // special characters can only be at the beginning of line
+                                    processingPrefixes = false;  // special characters can only be at the beginning of line
                                     break;
                             }
-
-                            firstChar = InputBuffer[dataOffset];
                         }
 
-                        bool wasOk = processText(&InputBuffer[dataOffset], dataCount, useLarge);
+                        wasOk &= processText(dataPtr, dataCount, useLarge);
                         if ((dataCount > 0) || moveIfEmpty) {
                             ssd1306_moveToNextRow();
                             if (useLarge) { ssd1306_moveToNextRow(); }  //extra move for large font
                         }
-
-                        if (!wasOk) { OutputBufferAppend('!'); }
-                        if (potentialCrLf) { OutputBufferAppend(0x0D); }  // CR was seen before LF
-                        OutputBufferAppend(0x0A);
                     }
+
+                    if (!wasOk) { OutputBufferAppend('!'); }
+                    if (potentialCrLf) { OutputBufferAppend(0x0D); }  // CR was seen before LF
+                    OutputBufferAppend(0x0A);
 
                     offset = i + 1;  // set the next start
                 }
@@ -280,6 +282,16 @@ bool processCommand(const uint8_t* data, const uint8_t count) {
                     if (!hexToNibble(*++data, &customCharData[i])) { return false; }
                 }
                 return ssd1306_drawLargeCharacter(&customCharData[0], 16);
+            }
+        }
+
+        case 'g': {  // add graph data
+            if (count == 3) {
+                uint8_t graphData;
+                if (!hexToNibble(*++data, &graphData)) { return false; }
+                if (!hexToNibble(*++data, &graphData)) { return false; }
+                graph_push(graphData);
+                return true;
             }
         }
 

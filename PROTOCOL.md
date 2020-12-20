@@ -67,7 +67,9 @@ first character in line. Usage within text will be ignored.
 
 ##### `0x0C` `FF` (`\f`) #####
 
-Reserved for future use.
+Draws graph at given position. Width of graph is determined by how many
+consecutive `FF` entries are there; i.e. to create 32 pixels wide graph, one
+would have 4 `FF` entries followed by a new line.
 
 ##### `0x0D` `CR` (`\r`) #####
 
