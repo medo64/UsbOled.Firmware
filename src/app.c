@@ -111,23 +111,19 @@ void main(void) {
                         wasOk = processCommand(dataPtr, dataCount);
                     } else {
                         bool useLarge = false;
-                        bool moveIfEmpty = true;
                         bool processingPrefixes = true;
-                        uint8_t graphWidth = 0;
                         while (processingPrefixes) {
                             switch (*dataPtr) {
                                 case 0x07:  // BEL: clear screen
                                     ssd1306_clearAll();
                                     dataPtr++;
                                     dataCount--;
-                                    moveIfEmpty = false;
                                     break;
 
                                 case 0x08:  // BS: move to origin
                                     ssd1306_moveTo(1, 1);
                                     dataPtr++;
                                     dataCount--;
-                                    moveIfEmpty = false;
                                     break;
 
                                 case 0x0B:  // VT: double-size font
@@ -146,8 +142,9 @@ void main(void) {
                             if (dataCount == 0) { break; }
                         }
 
-                        wasOk &= processText(dataPtr, dataCount, useLarge);
-                        if ((dataCount > 0) || moveIfEmpty) {
+                        if (dataCount > 0) {
+                            wasOk &= processText(dataPtr, dataCount, useLarge);
+                        } else {
                             ssd1306_moveToNextRow();
                             if (useLarge) { ssd1306_moveToNextRow(); }  //extra move for large font
                         }
