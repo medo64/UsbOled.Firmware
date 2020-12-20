@@ -8,6 +8,7 @@
 #include "ssd1306.h"
 #include "system.h"
 
+bool processInput(const uint8_t* data, const uint8_t count);
 bool processText(const uint8_t* data, const uint8_t count, const bool useLargeFont);
 bool processCommand(const uint8_t* data, const uint8_t count);
 void initOled(void);
@@ -99,56 +100,9 @@ void main(void) {
                 uint8_t eolChar = InputBuffer[i];  // this'll be EOL eventually
 
                 if ((eolChar == 0x0A) || (eolChar == 0x0D)) {  // start line processing on either CR or LF
-                    uint8_t* dataPtr = &InputBuffer[offset];
-                    uint8_t dataCount = i - offset;
-                    bool wasOk;
-
-                    if (*dataPtr == 0x09) {  // HT: command mode
-                        dataPtr++;
-                        dataCount--;
-                        wasOk = processCommand(dataPtr, dataCount);
-                    } else {
-                        bool useLarge = false;
-                        bool processingPrefixes = true;
-                        while (processingPrefixes) {
-                            switch (*dataPtr) {
-                                case 0x07:  // BEL: clear screen
-                                    ssd1306_clearAll();
-                                    dataPtr++;
-                                    dataCount--;
-                                    break;
-
-                                case 0x08:  // BS: move to origin
-                                    ssd1306_moveTo(1, 1);
-                                    dataPtr++;
-                                    dataCount--;
-                                    break;
-
-                                case 0x0B:  // VT: double-size font
-                                    dataPtr++;
-                                    dataCount--;
-                                    useLarge = true;
-                                    break;
-
-                                case 0x0C:  // FF: not used
-                                    break;
-
-                                default:
-                                    processingPrefixes = false;  // special characters can only be at the beginning of line
-                                    break;
-                            }
-                            if (dataCount == 0) { break; }
-                        }
-
-                        if (dataCount > 0) {
-                            wasOk &= processText(dataPtr, dataCount, useLarge);
-                        } else {
-                            ssd1306_moveToNextRow();
-                            if (useLarge) { ssd1306_moveToNextRow(); }  //extra move for large font
-                        }
+                    if (!processInput(&InputBuffer[offset], i - offset)) {
+                        OutputBufferAppend('!');  // if there's any error, return exclamation point
                     }
-
-                    if (!wasOk) { OutputBufferAppend('!'); }
                     OutputBufferAppend(eolChar);
 
                     offset = i + 1;  // set the next start
@@ -180,6 +134,57 @@ void initOled(void) {
     ssd1306_moveToNextRow();
     ssd1306_writeText("   medo64.com   ", false);
     ssd1306_moveToNextRow();
+}
+
+
+bool processInput(const uint8_t* data, const uint8_t count) {
+    uint8_t dataCount = count;
+    bool wasOk;
+    if (*data == 0x09) {  // HT: command mode
+        data++;
+        dataCount--;
+        wasOk = processCommand(data, dataCount);
+    } else {
+        bool useLarge = false;
+        bool processingPrefixes = true;
+        while (processingPrefixes) {
+            switch (*data) {
+                case 0x07:  // BEL: clear screen
+                    ssd1306_clearAll();
+                    data++;
+                    dataCount--;
+                    break;
+
+                case 0x08:  // BS: move to origin
+                    ssd1306_moveTo(1, 1);
+                    data++;
+                    dataCount--;
+                    break;
+
+                case 0x0B:  // VT: double-size font
+                    data++;
+                    dataCount--;
+                    useLarge = true;
+                    break;
+
+                case 0x0C:  // FF: not used
+                    break;
+
+                default:
+                    processingPrefixes = false;  // special characters can only be at the beginning of line
+                    break;
+            }
+            if (dataCount == 0) { break; }
+        }
+
+        if (dataCount > 0) {
+            wasOk &= processText(data, dataCount, useLarge);
+        } else {
+            ssd1306_moveToNextRow();
+            if (useLarge) { ssd1306_moveToNextRow(); }  //extra move for large font
+        }
+    }
+    return wasOk;
 }
 
 
