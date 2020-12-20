@@ -1,6 +1,11 @@
 #ifndef SETTINGS_H
 #define	SETTINGS_H
 
+#define SETTING_DEFAULT_ADDRESS         0x3C
+#define SETTING_DEFAULT_DISPLAY_HEIGHT  64
+#define SETTING_DEFAULT_BRIGHTNESS      0xCF
+
+
 /** Initializes settings. */
 void settings_init();
 
@@ -19,5 +24,11 @@ uint8_t settings_getDisplayHeight();
 
 /** Sets screen height. */
 void settings_setDisplayHeight(const uint8_t value);
+
+/** Gets OLED's brightness. */
+uint8_t settings_getBrightness();
+
+/** Sets OLED's brightness. */
+void settings_setBrightness(const uint8_t value);
 
 #endif	/* SETTINGS_H */

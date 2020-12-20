@@ -27,6 +27,7 @@ void main(void) {
 
     settings_init();
     initOled();
+    ssd1306_setContrast(settings_getBrightness());
 
     led_activity_off();
 
@@ -233,6 +234,17 @@ bool processCommand(const uint8_t* data, const uint8_t count) {
             }
         }
 
+        case '*': {  // set brightness
+            if (count == 3) {
+                uint8_t brightness;
+                if (!hexToNibble(*++data, &brightness)) { return false; }
+                if (!hexToNibble(*++data, &brightness)) { return false; }
+                settings_setBrightness(brightness);
+                ssd1306_setContrast(brightness);
+                return true;
+            }
+        }
+
         case '?': {  // print settings
             if (count == 1) {
                 uint8_t address = settings_getOledI2CAddress();
@@ -262,7 +274,7 @@ bool processCommand(const uint8_t* data, const uint8_t count) {
             }
         }
 
-        case '`': {  // save permanently
+        case '^': {  // save permanently
             if (count == 1) {
                 settings_save();
                 return true;
@@ -271,8 +283,9 @@ bool processCommand(const uint8_t* data, const uint8_t count) {
 
         case '~': {  // defaults
             if (count == 1) {
-                settings_setOledI2CAddress(0x3C);
-                settings_setDisplayHeight(64);
+                settings_setOledI2CAddress(SETTING_DEFAULT_ADDRESS);
+                settings_setDisplayHeight(SETTING_DEFAULT_DISPLAY_HEIGHT);
+                settings_setBrightness(SETTING_DEFAULT_BRIGHTNESS);
                 settings_save();
                 return true;
             }

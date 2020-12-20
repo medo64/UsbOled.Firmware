@@ -4,16 +4,14 @@
 #include "settings.h"
 #include "Microchip/usb_device.h"
 
-#define SETTING_DEFAULT_ADDRESS         0x3C
-#define SETTING_DEFAULT_DISPLAY_HEIGHT  64
-
-#define _SETTINGS_FLASH_RAW { SETTING_DEFAULT_ADDRESS, SETTING_DEFAULT_DISPLAY_HEIGHT, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 } //reserving space because erase block is block 32-word (32-bytes as only low bytes are used)
+#define _SETTINGS_FLASH_RAW { SETTING_DEFAULT_ADDRESS, SETTING_DEFAULT_DISPLAY_HEIGHT, SETTING_DEFAULT_BRIGHTNESS, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 } //reserving space because erase block is block 32-word (32-bytes as only low bytes are used)
 #define _SETTINGS_FLASH_LOCATION 0x1FE0
 const uint8_t _SETTINGS_PROGRAM[] __at(_SETTINGS_FLASH_LOCATION) = _SETTINGS_FLASH_RAW;
 
 typedef struct {
     uint8_t Address;
     uint8_t DisplayHeight;
+    uint8_t Brightness;
 } SettingsRecord;
 
 SettingsRecord Settings;
@@ -83,4 +81,13 @@ uint8_t settings_getDisplayHeight() {
 
 void settings_setDisplayHeight(const uint8_t value) {
     Settings.DisplayHeight = value;
+}
+
+
+uint8_t settings_getBrightness() {
+    return Settings.Brightness;
+}
+
+void settings_setBrightness(const uint8_t value) {
+    Settings.Brightness = value;
 }
