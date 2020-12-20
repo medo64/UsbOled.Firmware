@@ -143,14 +143,16 @@ void main(void) {
                                         dataCount--;
                                         graphWidth += 1;
                                     }
-                                    wasOk = graph_draw(graphWidth, false);
+                                    wasOk = graph_draw(graphWidth, useLarge);
                                     graphWidth = 0;
+                                    moveIfEmpty = true;
                                     break;
 
                                 default:
                                     processingPrefixes = false;  // special characters can only be at the beginning of line
                                     break;
                             }
+                            if (dataCount == 0) { break; }
                         }
 
                         wasOk &= processText(dataPtr, dataCount, useLarge);
@@ -190,8 +192,10 @@ void initOled(void) {
     ssd1306_init(settings_getOledI2CAddress(), 128, settings_getDisplayHeight());
     ssd1306_clearAll();
 
-    ssd1306_writeLargeTextAt("USB OLED", 1, 5);
-    ssd1306_writeTextAt("medo64.com", 3, 4);
+    ssd1306_writeText("    USB OLED    ", true);
+    ssd1306_moveToNextRow();
+    ssd1306_moveToNextRow();
+    ssd1306_writeText("   medo64.com   ", false);
     ssd1306_moveToNextRow();
 }
 
@@ -202,9 +206,9 @@ bool processText(const uint8_t* data, const uint8_t count, const bool useLargeFo
         uint8_t value = *data;
         if (value >= 32) {
             if (useLargeFont) {
-                ok = ok && ssd1306_writeLargeCharacter(value);
+                ok &= ssd1306_writeCharacter(value, true);
             } else {
-                ok = ok && ssd1306_writeCharacter(value);
+                ok &= ssd1306_writeCharacter(value, false);
             }
         } else {
             ok = false;
@@ -270,7 +274,7 @@ bool processCommand(const uint8_t* data, const uint8_t count) {
                     if (!hexToNibble(*++data, &customCharData[i])) { return false; }
                     if (!hexToNibble(*++data, &customCharData[i])) { return false; }
                 }
-                return ssd1306_drawCharacter(&customCharData[0], 8);
+                return ssd1306_drawCharacter(&customCharData[0], 8, false);
             }
         }
 
@@ -281,7 +285,7 @@ bool processCommand(const uint8_t* data, const uint8_t count) {
                     if (!hexToNibble(*++data, &customCharData[i])) { return false; }
                     if (!hexToNibble(*++data, &customCharData[i])) { return false; }
                 }
-                return ssd1306_drawLargeCharacter(&customCharData[0], 16);
+                return ssd1306_drawCharacter(&customCharData[0], 16, true);
             }
         }
 

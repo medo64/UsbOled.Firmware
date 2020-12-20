@@ -15,26 +15,37 @@ void graph_push(const uint8_t value) {
     if (GraphStart > 0) { GraphStart--; }  // just track how many valid data points are there
 }
 
-bool graph_draw(uint8_t width, bool large) {
+bool graph_draw(uint8_t width, bool isLarge) {
     uint8_t startOffset = 128 - (width << 3);  // calculate where to start based on required character count
     uint8_t data[16];
     for (uint8_t i = startOffset; i < 128; i++) {
         uint8_t columnOffset = i & 0x07;  // figure out which column we're at
+        uint8_t dataT, dataB;
         if (i >= GraphStart) {
             uint8_t dataOffset = i >> 1;
             uint8_t dataShift = ((i & 0x01) == 0) ? 4 : 0;
             uint8_t value = (GraphData[dataOffset] >> dataShift) & 0x0F;
-            if (!large) { value >>= 1; }  // divide by 2 as we're only dealing with 8 pixels
-            uint8_t opposite = 7 - value;
+            if (!isLarge) { value >>= 1; }  // divide by 2 as we're only dealing with 8 pixels
+            uint8_t tip = value & 0x07;
+            uint8_t opposite = 7 - tip;
             uint8_t stack = 0xFF;
             stack >>= opposite;
             stack <<= opposite;
-            data[columnOffset] = stack;
+            if (!isLarge || (value > 7)) {
+                dataT = stack;
+                dataB = 0xFF;
+            } else {
+                dataT = 0x00;
+                dataB = stack;
+            }
         } else {  // no graph data yet
-            data[columnOffset] = 0x00;  // nothing to draw if graph didn't catch up
+            dataT = 0x00;
+            dataB = 0x00;
         }
+        data[columnOffset] = dataT;
+        data[columnOffset + 8] = dataB;
         if (columnOffset == 7) {  // every 8 bytes, draw character
-            if (!ssd1306_drawCharacter(&data[0], 8)) {
+            if (!ssd1306_drawCharacter(data, 16, isLarge)) {
                 return false;  // exit early if drawing fails (e.g. we're at the right screen edge)
             }
         }

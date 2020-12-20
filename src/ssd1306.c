@@ -153,98 +153,63 @@ bool ssd1306_moveToNextRow() {
 }
 
 
-bool ssd1306_drawCharacter(const uint8_t* data, const uint8_t count) {
-    if (count != 8) { return false; }  // must be 8x8 pixels - 8 bytes
+bool ssd1306_drawCharacter(const uint8_t* data, const uint8_t count, bool isLarge) {
+    if (!isLarge && (count < 8)) { return false; }  // must be 8x8 pixels - 8 bytes
+    if (isLarge && (count < 16)) { return false; }  // must be 8x16 pixels - 16 bytes
     if (currentColumn >= displayColumns) { return false; }
 
-    ssd1306_writeRawData(data, 8);
-    currentColumn++;
+    if (isLarge) {
+        ssd1306_writeRawCommand1(SSD1306_SET_PAGE_START_ADDRESS | (currentRow + 1));
+        ssd1306_writeRawData(&data[8], 8);
 
-    return true;
-}
-
-bool ssd1306_drawLargeCharacter(const uint8_t* data, const uint8_t count) {
-    if (count != 16) { return false; }  // must be 8x16 pixels - 16 bytes
-    if (currentColumn >= displayColumns) { return false; }  // don't go further than end of line
-    if (currentRow >= displayRows - 1) { return false; }  // don't write half characters
-
-    ssd1306_writeRawCommand1(SSD1306_SET_PAGE_START_ADDRESS | (currentRow + 1));
-    ssd1306_writeRawData(&data[8], 8);
-
-    uint8_t currentColumnLow = (currentColumn << 3) & 0x0F;
-    uint8_t currentColumnHigh = (currentColumn >> 1) & 0x0F;
-    ssd1306_writeRawCommand1(SSD1306_SET_PAGE_START_ADDRESS | currentRow);
-    ssd1306_writeRawCommand1(SSD1306_SET_LOWER_START_COLUMN_ADDRESS | currentColumnLow);
-    ssd1306_writeRawCommand1(SSD1306_SET_UPPER_START_COLUMN_ADDRESS | currentColumnHigh);
-    ssd1306_writeRawData(&data[0], 8);
-
-    currentColumn++;
-    return true;
-}
-
-
-bool ssd1306_writeCharacter(const uint8_t value) {
-    uint8_t data[8];
-    if ((value <= 32) || (value >= 127)) {
-        for (uint8_t i = 0; i < sizeof(data); i++) { data[i] = 0; }
+        uint8_t currentColumnLow = (currentColumn << 3) & 0x0F;
+        uint8_t currentColumnHigh = (currentColumn >> 1) & 0x0F;
+        ssd1306_writeRawCommand1(SSD1306_SET_PAGE_START_ADDRESS | currentRow);
+        ssd1306_writeRawCommand1(SSD1306_SET_LOWER_START_COLUMN_ADDRESS | currentColumnLow);
+        ssd1306_writeRawCommand1(SSD1306_SET_UPPER_START_COLUMN_ADDRESS | currentColumnHigh);
+        ssd1306_writeRawData(&data[0], 8);
     } else {
-        uint16_t offset = (value - 33) << 3;  // *8
-        for (uint8_t i = 0; i < sizeof(data); i++) {
-            data[i] = font_8x8[offset + i];
-        }
+        ssd1306_writeRawData(data, 8);
     }
+    currentColumn++;
 
-    return ssd1306_drawCharacter(data, 8);
+    return true;
 }
 
-bool ssd1306_writeText(const uint8_t* text) {
-    bool ok = true;
-    while (*text != 0) {
-        ok &= ssd1306_writeCharacter(*text);
-        text++;
-    }
-    return ok;
-}
-
-bool ssd1306_writeTextAt(const uint8_t* text, const uint8_t row, const uint8_t column) {
-    if (!ssd1306_moveTo(row, column)) { return false; }
-    return ssd1306_writeText(text);
-}
-
-
-bool ssd1306_writeLargeCharacter(const uint8_t value) {
+bool ssd1306_writeCharacter(const uint8_t value, bool isLarge) {
     uint8_t data[16];
     if ((value <= 32) || (value >= 127)) {
         for (uint8_t i = 0; i < sizeof(data); i++) { data[i] = 0; }
     } else {
-        uint16_t offset = (value - 33) << 4;  // *16
-        for (uint8_t i = 0; i < sizeof(data); i++) {
-            data[i] = font_8x16[offset + i];
+        if (isLarge) {
+            uint16_t offset = (value - 33) << 4;  // *16
+            for (uint8_t i = 0; i < 16; i++) {
+                data[i] = font_8x16[offset + i];
+            }
+        } else {
+            uint16_t offset = (value - 33) << 3;  // *8
+            for (uint8_t i = 0; i < 8; i++) {
+                data[i] = font_8x8[offset + i];
+            }
         }
     }
-
-    return ssd1306_drawLargeCharacter(data, 16);
+    return ssd1306_drawCharacter(data, 16, isLarge);
 }
 
-bool ssd1306_writeLargeText(const uint8_t* text) {
+bool ssd1306_writeText(const uint8_t* text, bool isLarge) {
     bool ok = true;
     while (*text != 0) {
-        ok &= ssd1306_writeLargeCharacter(*text);
+        ok &= ssd1306_writeCharacter(*text, isLarge);
         text++;
     }
     return ok;
 }
 
-bool ssd1306_writeLargeTextAt(const uint8_t* text, const uint8_t row, const uint8_t column) {
-    if (!ssd1306_moveTo(row, column)) { return false; }
-    return ssd1306_writeLargeText(text);
-}
 
-
-void ssd1306_writeRawCommand1(const uint8_t value) {
+void ssd1306_writeRawCommand1(const uint8_t value1) {
    i2c_master_startWrite(displayAddress);
    i2c_master_writeByte(0x00);
-   i2c_master_writeByte(value);
+   i2c_master_writeByte(value1);
    i2c_master_stop();
 }
 

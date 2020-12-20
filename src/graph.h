@@ -8,6 +8,6 @@
 void graph_push(const uint8_t value);
 
 /** Draws graph data starting at the current location. */
-bool graph_draw(uint8_t width, bool large);
+bool graph_draw(uint8_t width, bool isLarge);
 
 #endif	/* GRAPH_H */

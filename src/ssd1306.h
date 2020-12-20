@@ -32,29 +32,12 @@ bool ssd1306_clearRow(const uint8_t row);
 
 
 /** Writes custom 8x8 character at the current position */
-bool ssd1306_drawCharacter(const uint8_t* data, const uint8_t count);
-
-/** Writes custom 8x16 character at the current position */
-bool ssd1306_drawLargeCharacter(const uint8_t* data, const uint8_t count);
-
+bool ssd1306_drawCharacter(const uint8_t* data, const uint8_t count, bool isLarge);
 
 /** Writes 8x8 character at the current position */
-bool ssd1306_writeCharacter(const uint8_t value);
+bool ssd1306_writeCharacter(const uint8_t value, bool isLarge);
 
 /** Writes 8x8 text at the current position */
-bool ssd1306_writeText(const uint8_t* text);
-
-/** Writes 8x8 text at the current position */
-bool ssd1306_writeTextAt(const uint8_t* text, const uint8_t row, const uint8_t column);
-
-
-/** Writes 8x16 character at the current position */
-bool ssd1306_writeLargeCharacter(const uint8_t value);
-
-/** Writes 8x16 text at the current position */
-bool ssd1306_writeLargeText(const uint8_t* text);
-
-/** Writes 8x16 text at the current position */
-bool ssd1306_writeLargeTextAt(const uint8_t* text, const uint8_t row, const uint8_t column);
+bool ssd1306_writeText(const uint8_t* text, bool isLarge);
 
 #endif
