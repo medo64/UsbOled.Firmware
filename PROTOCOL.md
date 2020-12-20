@@ -89,35 +89,6 @@ or `CRLF`.
 Either output will exit the command mode.
 
 
-#### `~` (restore defaults) ####
-
-This parameter-less command restores all setting to their default value. This
-means OLED module is assumed to be on `0x3C` I2C address and display size is
-128x64.
-
-##### Example (default) #####
-
-|           |                                                                |
-|-----------|----------------------------------------------------------------|
-| Request:  | `~` `LF`                                                       |
-| Response: | `LF`                                                           |
-| Result:   | Display size is 128x64 and module address is `0x3C`.           |
-
-
-#### `@` (set address) ####
-
-This command will set OLED module I2C address. Argument is address in
-hexadecimal form.
-
-##### Example 1 (0x3C) #####
-
-|           |                                                                |
-|-----------|----------------------------------------------------------------|
-| Request:  | `@3C` `LF`                                                     |
-| Response: | `LF`                                                           |
-| Result:   | OLED module is at 0x3C.                                        |
-
-
 #### `#` (set size) ####
 
 This command will set screen size. Argument is either `A` (128x64) or `B`
@@ -148,6 +119,20 @@ This command will set screen size. Argument is either `A` (128x64) or `B`
 | Result:   | No change to display size.                                     |
 
 
+#### `@` (set address) ####
+
+This command will set OLED module I2C address. Argument is address in
+hexadecimal form.
+
+##### Example 1 (0x3C) #####
+
+|           |                                                                |
+|-----------|----------------------------------------------------------------|
+| Request:  | `@3C` `LF`                                                     |
+| Response: | `LF`                                                           |
+| Result:   | OLED module is at 0x3C.                                        |
+
+
 #### `?` (print settings) ####
 
 This parameter will print current setting values separated by space. Screen
@@ -160,6 +145,21 @@ at sign (`@`).
 |-----------|----------------------------------------------------------------|
 | Request:  | `?` `LF`                                                       |
 | Response: | `@C #A` `LF`                                                   |
+| Result:   | Display size is 128x64 and module address is `0x3C`.           |
+
+
+#### `~` (restore defaults) ####
+
+This parameter-less command restores all setting to their default value. This
+means OLED module is assumed to be on `0x3C` I2C address and display size is
+128x64.
+
+##### Example (default) #####
+
+|           |                                                                |
+|-----------|----------------------------------------------------------------|
+| Request:  | `~` `LF`                                                       |
+| Response: | `LF`                                                           |
 | Result:   | Display size is 128x64 and module address is `0x3C`.           |
 
 
