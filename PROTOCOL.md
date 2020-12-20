@@ -92,7 +92,7 @@ Either output will exit the command mode.
 #### `#` (set size) ####
 
 This command will set screen size. Argument is either `A` (128x64) or `B`
-(128x32).
+(128x32). Settings are not automatically saved but require `^` command.
 
 ##### Example 1 (128x64) #####
 
@@ -122,7 +122,8 @@ This command will set screen size. Argument is either `A` (128x64) or `B`
 #### `@` (set address) ####
 
 This command will set OLED module I2C address. Argument is address in
-hexadecimal form.
+hexadecimal form. Settings are not automatically saved but require `^`
+command.
 
 ##### Example 1 (0x3C) #####
 
@@ -148,11 +149,16 @@ at sign (`@`).
 | Result:   | Display size is 128x64 and module address is `0x3C`.           |
 
 
+#### `^` (save settings) ####
+
+This parameter-less command saves newly changed settings.
+
+
 #### `~` (restore defaults) ####
 
 This parameter-less command restores all setting to their default value. This
 means OLED module is assumed to be on `0x3C` I2C address and display size is
-128x64.
+128x64. Settings are automatically committed to permantent memory.
 
 ##### Example (default) #####
 

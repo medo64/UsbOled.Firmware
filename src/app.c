@@ -220,21 +220,6 @@ bool processText(const uint8_t* data, const uint8_t count, const bool useLargeFo
 
 bool processCommand(const uint8_t* data, const uint8_t count) {
     switch (*data) {
-        case '~': {  // defaults
-            return false;
-        }
-
-        case '@': {  // select address
-            if (count == 3) {
-                uint8_t address;
-                if (!hexToNibble(*++data, &address)) { return false; }
-                if (!hexToNibble(*++data, &address)) { return false; }
-                settings_setOledI2CAddress(address);
-                settings_save();
-                initOled();
-                return true;
-            }
-        }
 
         case '#': {  // set screen size
             if (count == 2) {
@@ -243,7 +228,6 @@ bool processCommand(const uint8_t* data, const uint8_t count) {
                     case 'B': settings_setDisplayHeight(32); break;
                     default: return false;
                 }
-                settings_save();
                 initOled();
                 return true;
             }
@@ -263,6 +247,33 @@ bool processCommand(const uint8_t* data, const uint8_t count) {
                     case 32: OutputBufferAppend('B'); break;
                     default: OutputBufferAppend('A'); break;
                 }
+                return true;
+            }
+        }
+
+        case '@': {  // select address
+            if (count == 3) {
+                uint8_t address;
+                if (!hexToNibble(*++data, &address)) { return false; }
+                if (!hexToNibble(*++data, &address)) { return false; }
+                settings_setOledI2CAddress(address);
+                initOled();
+                return true;
+            }
+        }
+
+        case '`': {  // save permanently
+            if (count == 1) {
+                settings_save();
+                return true;
+            }
+        }
+
+        case '~': {  // defaults
+            if (count == 1) {
+                settings_setOledI2CAddress(0x3C);
+                settings_setDisplayHeight(64);
+                settings_save();
                 return true;
             }
         }

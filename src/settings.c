@@ -69,7 +69,7 @@ uint8_t settings_getOledI2CAddress() {
     return (value > 0) ? value : 0x3C;
 }
 
-void settings_setOledI2CAddress(uint8_t value) {
+void settings_setOledI2CAddress(const uint8_t value) {
     Settings.Address = value;
 }
 
@@ -81,6 +81,6 @@ uint8_t settings_getDisplayHeight() {
     }
 }
 
-void settings_setDisplayHeight(uint8_t height) {
-    Settings.DisplayHeight = height;
+void settings_setDisplayHeight(const uint8_t value) {
+    Settings.DisplayHeight = value;
 }
