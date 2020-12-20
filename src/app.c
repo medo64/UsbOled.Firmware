@@ -3,7 +3,6 @@
 #include "Microchip/usb_device.h"
 #include "Microchip/usb_device_cdc.h"
 #include "buffer.h"
-#include "graph.h"
 #include "led.h"
 #include "settings.h"
 #include "ssd1306.h"
@@ -137,16 +136,7 @@ void main(void) {
                                     useLarge = true;
                                     break;
 
-                                case 0x0C:  // FF: draw graph
-                                    while (*dataPtr == 0x0C) {
-                                        if (dataCount == 0) { break; }
-                                        dataPtr++;
-                                        dataCount--;
-                                        graphWidth += 1;
-                                    }
-                                    wasOk = graph_draw(graphWidth, useLarge);
-                                    graphWidth = 0;
-                                    moveIfEmpty = true;
+                                case 0x0C:  // FF: not used
                                     break;
 
                                 default:
@@ -310,16 +300,6 @@ bool processCommand(const uint8_t* data, const uint8_t count) {
                     if (!hexToNibble(*++data, &customCharData[i])) { return false; }
                 }
                 return ssd1306_drawCharacter(&customCharData[0], 16, true);
-            }
-        }
-
-        case 'g': {  // add graph data
-            if (count == 3) {
-                uint8_t graphData;
-                if (!hexToNibble(*++data, &graphData)) { return false; }
-                if (!hexToNibble(*++data, &graphData)) { return false; }
-                graph_push(graphData);
-                return true;
             }
         }
 
