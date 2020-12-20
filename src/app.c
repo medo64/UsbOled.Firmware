@@ -95,14 +95,12 @@ void main(void) {
         // Process line
         if (InputBufferCount > 0) {
             uint8_t offset = 0;
-            bool potentialCrLf = false;
-
             for (uint8_t i = 0; i < InputBufferCount; i++) {  // find EOLs
-                uint8_t value = InputBuffer[i];
+                uint8_t eolChar = InputBuffer[i];  // this'll be EOL eventually
 
-                if (value == 0x0A) {  // start line processing
+                if ((eolChar == 0x0A) || (eolChar == 0x0D)) {  // start line processing on either CR or LF
                     uint8_t* dataPtr = &InputBuffer[offset];
-                    uint8_t dataCount = i - offset - (potentialCrLf ? 1 : 0);
+                    uint8_t dataCount = i - offset;
                     bool wasOk;
 
                     if (*dataPtr == 0x09) {  // HT: command mode
@@ -151,13 +149,10 @@ void main(void) {
                     }
 
                     if (!wasOk) { OutputBufferAppend('!'); }
-                    if (potentialCrLf) { OutputBufferAppend(0x0D); }  // CR was seen before LF
-                    OutputBufferAppend(0x0A);
+                    OutputBufferAppend(eolChar);
 
                     offset = i + 1;  // set the next start
                 }
-
-                potentialCrLf = (value == 0x0D);  // checked when LF is matched
             }
 
             if (offset > 0) {  // move unused portion of buffer to the start

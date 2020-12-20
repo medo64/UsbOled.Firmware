@@ -15,17 +15,22 @@ next pixel line will be 24.
 
 ### Text Mode ###
 
-When device is turned on, it will be in text mode. Once `LF` (`0x0A`) or
-`CRLF` (`0x0D0A`) are received, the collected text will be shown on display.
+When device is turned on, it will be in text mode. Once `LF` (`0x0A`) or `CR`
+(`0x0D`) are received, the collected text will be shown on display.
 
-If writing was successful, a `LF` or `CRLF` will be returned. Otherwise, it
-will echo exclamation point (`!`) character followed by an optional text and
-ending with `LF` or `CRLF`.
+If writing was successful, a `LF` or `CR` will be returned. Otherwise, it will
+echo exclamation point (`!`) character followed by an optional text and ending
+with `LF` or `CR`.
 
-Whether output will be `LF` or `CRLF` terminated depends on the previous
-input. That is, if previous text ended with `LF`, response will also use `LF`.
-If previous text used `CRLF` as a line-ending characters, `CRLF` will be used
-for reply.
+Whether output will be `LF` or `CR` terminated depends on the previous input.
+That is, if previous text ended with `LF`, response will also use `LF`. If
+previous text used `CR` as a line-ending characters, `CR` will be used for
+reply.
+
+If there is no text specified, cursor will move to the next line. Otherwise,
+it will stay on the same line. Please note that if you send `CRLF` as line
+ending, the first line ending (`CR`) will write the text and the second one
+will move cursor to the next line.
 
 Characters lower than ASCII 32 or higher than ASCII 126 are ignored unless
 specified explicitly as an escape character.
@@ -51,7 +56,7 @@ will not move to the next line.
 Tab will switch device into the "Command Mode" thus treating rest of the line
 as a command. Can only be used as a first character in line. Usage within text
 will be ignored. It's processed only as a first character in line. Command
-mode stops once `LF` or `CRLF` is detected and command has been executed.
+mode stops once `LF` or `CR` is detected and command has been executed.
 
 ##### `0x0A` `LF` (`\n`) #####
 
@@ -78,11 +83,11 @@ Used just in pair with `LF`.
 
 Command mode is entered using `HT` (`0x09`) character as the first character
 of the new line,  followed by a single character command. Command will be
-processed once `LF` or `CRLF` is detected.
+processed once `LF` or `CR` is detected.
 
-If command is successful, it will echo a `LF` or `CRLF`, otherwise it will
+If command is successful, it will echo a `LF` or `CR`, otherwise it will
 echo exclamation point (`!`) followed by optional text and finished with `LF`
-or `CRLF`.
+or `CR`.
 
 Either output will exit the command mode.
 
