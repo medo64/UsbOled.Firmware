@@ -27,7 +27,7 @@ void main(void) {
 
     settings_init();
     initOled();
-    ssd1306_setContrast(settings_getBrightness());
+    ssd1306_setContrast(settings_getDisplayBrightness());
 
     led_activity_off();
 
@@ -126,7 +126,7 @@ void __interrupt() SYS_InterruptHigh(void) {
 
 
 void initOled(void) {
-    ssd1306_init(settings_getOledI2CAddress(), 128, settings_getDisplayHeight());
+    ssd1306_init(settings_getI2CAddress(), 128, settings_getDisplayHeight());
     ssd1306_clearAll();
 
     ssd1306_writeText("    USB OLED    ", true);
@@ -231,7 +231,7 @@ bool processCommand(const uint8_t* data, const uint8_t count) {
 
         case '*': {  // brightness
             if (count == 1) {  // get brightness
-                uint8_t brightness = settings_getBrightness();
+                uint8_t brightness = settings_getDisplayBrightness();
                 OutputBufferAppend(nibbleToHex(brightness >> 4));  // high nibble
                 OutputBufferAppend(nibbleToHex(brightness));  // low nibble
                 return true;
@@ -239,7 +239,7 @@ bool processCommand(const uint8_t* data, const uint8_t count) {
                 uint8_t brightness;
                 if (!hexToNibble(*++data, &brightness)) { return false; }
                 if (!hexToNibble(*++data, &brightness)) { return false; }
-                settings_setBrightness(brightness);
+                settings_setDisplayBrightness(brightness);
                 settings_save();
                 ssd1306_setContrast(brightness);
                 return true;
@@ -248,7 +248,7 @@ bool processCommand(const uint8_t* data, const uint8_t count) {
 
         case '@': {  // I2C address
             if (count == 1) {  // get I2C address
-                uint8_t address = settings_getOledI2CAddress();
+                uint8_t address = settings_getI2CAddress();
                 OutputBufferAppend(nibbleToHex(address >> 4));  // high nibble
                 OutputBufferAppend(nibbleToHex(address));  // low nibble
                 return true;
@@ -256,7 +256,7 @@ bool processCommand(const uint8_t* data, const uint8_t count) {
                 uint8_t address;
                 if (!hexToNibble(*++data, &address)) { return false; }
                 if (!hexToNibble(*++data, &address)) { return false; }
-                settings_setOledI2CAddress(address);
+                settings_setI2CAddress(address);
                 settings_save();
                 initOled();
                 return true;
@@ -265,9 +265,9 @@ bool processCommand(const uint8_t* data, const uint8_t count) {
 
         case '~': {  // defaults
             if (count == 1) {
-                settings_setOledI2CAddress(SETTING_DEFAULT_ADDRESS);
+                settings_setI2CAddress(SETTING_DEFAULT_I2C_ADDRESS);
                 settings_setDisplayHeight(SETTING_DEFAULT_DISPLAY_HEIGHT);
-                settings_setBrightness(SETTING_DEFAULT_BRIGHTNESS);
+                settings_setDisplayBrightness(SETTING_DEFAULT_DISPLAY_BRIGHTNESS);
                 settings_save();
                 return true;
             }

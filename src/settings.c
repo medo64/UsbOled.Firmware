@@ -4,14 +4,22 @@
 #include "settings.h"
 #include "Microchip/usb_device.h"
 
-#define _SETTINGS_FLASH_RAW { SETTING_DEFAULT_ADDRESS, SETTING_DEFAULT_DISPLAY_HEIGHT, SETTING_DEFAULT_BRIGHTNESS, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 } //reserving space because erase block is block 32-word (32-bytes as only low bytes are used)
+#define _SETTINGS_FLASH_RAW {                                                                \
+                              SETTING_DEFAULT_I2C_ADDRESS,                                   \
+                              SETTING_DEFAULT_DISPLAY_HEIGHT,                                \
+                              SETTING_DEFAULT_DISPLAY_BRIGHTNESS,                            \
+                              0, 0, 0, 0, 0                                                  \
+                              0, 0, 0, 0, 0, 0, 0, 0,                                        \
+                              0, 0, 0, 0, 0, 0, 0, 0,                                        \
+                              0, 0, 0, 0, 0, 0, 0, 0                                         \
+                            }  // reserving space because erase block is block 32-word (32-bytes as only low bytes are used)
 #define _SETTINGS_FLASH_LOCATION 0x1FE0
 const uint8_t _SETTINGS_PROGRAM[] __at(_SETTINGS_FLASH_LOCATION) = _SETTINGS_FLASH_RAW;
 
 typedef struct {
-    uint8_t Address;
+    uint8_t I2CAddress;
     uint8_t DisplayHeight;
-    uint8_t Brightness;
+    uint8_t DisplayBrightness;
 } SettingsRecord;
 
 SettingsRecord Settings;
@@ -62,13 +70,13 @@ void settings_save() {
 }
 
 
-uint8_t settings_getOledI2CAddress() {
-    uint8_t value = Settings.Address;
-    return (value > 0) ? value : 0x3C;
+uint8_t settings_getI2CAddress() {
+    uint8_t value = Settings.I2CAddress;
+    return (value > 0) ? value : SETTING_DEFAULT_I2C_ADDRESS;
 }
 
-void settings_setOledI2CAddress(const uint8_t value) {
-    Settings.Address = value;
+void settings_setI2CAddress(const uint8_t value) {
+    Settings.I2CAddress = value;
 }
 
 
@@ -84,10 +92,10 @@ void settings_setDisplayHeight(const uint8_t value) {
 }
 
 
-uint8_t settings_getBrightness() {
-    return Settings.Brightness;
+uint8_t settings_getDisplayBrightness() {
+    return Settings.DisplayBrightness;
 }
 
-void settings_setBrightness(const uint8_t value) {
-    Settings.Brightness = value;
+void settings_setDisplayBrightness(const uint8_t value) {
+    Settings.DisplayBrightness = value;
 }

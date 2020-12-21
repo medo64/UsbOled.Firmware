@@ -1,9 +1,9 @@
 #ifndef SETTINGS_H
 #define	SETTINGS_H
 
-#define SETTING_DEFAULT_ADDRESS         0x3C
-#define SETTING_DEFAULT_DISPLAY_HEIGHT  64
-#define SETTING_DEFAULT_BRIGHTNESS      0xCF
+#define SETTING_DEFAULT_I2C_ADDRESS         0x3C
+#define SETTING_DEFAULT_DISPLAY_HEIGHT      64
+#define SETTING_DEFAULT_DISPLAY_BRIGHTNESS  0xCF
 
 
 /** Initializes settings. */
@@ -14,10 +14,10 @@ void settings_save();
 
 
 /** Gets OLED's I2C address. */
-uint8_t settings_getOledI2CAddress();
+uint8_t settings_getI2CAddress();
 
 /** Sets OLED's I2C address. */
-void settings_setOledI2CAddress(const uint8_t value);
+void settings_setI2CAddress(const uint8_t value);
 
 /** Gets screen height. Only 64 (A-type) and 32 (B-type) are supported. */
 uint8_t settings_getDisplayHeight();
@@ -26,9 +26,9 @@ uint8_t settings_getDisplayHeight();
 void settings_setDisplayHeight(const uint8_t value);
 
 /** Gets OLED's brightness. */
-uint8_t settings_getBrightness();
+uint8_t settings_getDisplayBrightness();
 
 /** Sets OLED's brightness. */
-void settings_setBrightness(const uint8_t value);
+void settings_setDisplayBrightness(const uint8_t value);
 
 #endif	/* SETTINGS_H */
