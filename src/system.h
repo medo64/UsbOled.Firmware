@@ -31,6 +31,7 @@
 #define interruptsEnable()   GIE = 1
 #define interruptsDisable()  GIE = 0
 
+#define reset()  asm("RESET");
 #define wait_short()  __delay_ms(150);
 
 

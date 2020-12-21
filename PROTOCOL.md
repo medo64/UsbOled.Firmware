@@ -127,6 +127,19 @@ argument, the current value will be returned.
 | Result:   | No change to display size.                                     |
 
 
+#### `%` (reset) ####
+
+This command will reboot the device, including it's USB stack.
+
+##### Example 1 #####
+
+|           |                                                                |
+|-----------|----------------------------------------------------------------|
+| Request:  | `HT` `%` `LF`                                                  |
+| Response: | None                                                           |
+| Result:   | Device is restarted.                                           |
+
+
 #### `*` (brightness) ####
 
 This command will set OLED contrast/brightness. Argument is value in

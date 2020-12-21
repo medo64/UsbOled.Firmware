@@ -226,6 +226,13 @@ bool processCommand(const uint8_t* data, const uint8_t count) {
             }
         }
 
+        case '%': {  // reset
+            if (count == 1) {  // reboot
+                reset();
+                return true;
+            }
+        }
+
         case '*': {  // brightness
             if (count == 1) {  // get brightness
                 uint8_t brightness = settings_getDisplayBrightness();
