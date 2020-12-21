@@ -153,7 +153,7 @@ bool ssd1306_moveToNextRow() {
 }
 
 
-bool ssd1306_drawCharacter(const uint8_t* data, const uint8_t count, bool isLarge) {
+bool ssd1306_drawCharacter(const uint8_t* data, const uint8_t count, const bool isLarge) {
     if (!isLarge && (count < 8)) { return false; }  // must be 8x8 pixels - 8 bytes
     if (isLarge && (count < 16)) { return false; }  // must be 8x16 pixels - 16 bytes
     if (currentColumn >= displayColumns) { return false; }
@@ -176,7 +176,7 @@ bool ssd1306_drawCharacter(const uint8_t* data, const uint8_t count, bool isLarg
     return true;
 }
 
-bool ssd1306_writeCharacter(const uint8_t value, bool isLarge) {
+bool ssd1306_writeCharacter(const uint8_t value, const bool isLarge) {
     uint8_t data[16];
     if ((value <= 32) || (value >= 127)) {
         for (uint8_t i = 0; i < sizeof(data); i++) { data[i] = 0; }
@@ -196,7 +196,7 @@ bool ssd1306_writeCharacter(const uint8_t value, bool isLarge) {
     return ssd1306_drawCharacter(data, 16, isLarge);
 }
 
-bool ssd1306_writeText(const uint8_t* text, bool isLarge) {
+bool ssd1306_writeText(const uint8_t* text, const bool isLarge) {
     bool ok = true;
     while (*text != 0) {
         ok &= ssd1306_writeCharacter(*text, isLarge);
