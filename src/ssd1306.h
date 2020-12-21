@@ -27,6 +27,9 @@ bool ssd1306_moveToNextRow();
 /** Clear display content. */
 void ssd1306_clearAll();
 
+/** Clear remaining. */
+void ssd1306_clearRemaining();
+
 /** Clear display content of a single row. */
 bool ssd1306_clearRow(const uint8_t row);
 

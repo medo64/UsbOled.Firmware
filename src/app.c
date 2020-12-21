@@ -167,7 +167,10 @@ bool processInput(const uint8_t* data, const uint8_t count) {
                     useLarge = true;
                     break;
 
-                case 0x0C:  // FF: not used
+                case 0x0C:  // FF: clear remaining
+                    data++;
+                    dataCount--;
+                    ssd1306_clearRemaining();
                     break;
 
                 default:

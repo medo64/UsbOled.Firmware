@@ -72,7 +72,7 @@ first character in line. Usage within text will be ignored.
 
 ##### `0x0C` `FF` (`\f`) #####
 
-Reserved for further use.
+Clears the rest of the line leaving cursor at the current position.
 
 ##### `0x0D` `CR` (`\r`) #####
 

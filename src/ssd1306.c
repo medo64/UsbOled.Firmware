@@ -116,6 +116,11 @@ void ssd1306_clearAll() {
     ssd1306_moveTo(1, 1);
 }
 
+void ssd1306_clearRemaining() {
+    ssd1306_writeRawDataZeros((displayColumns - currentColumn) << 3);
+    ssd1306_moveTo(currentRow, currentColumn);
+}
+
 bool ssd1306_clearRow(const uint8_t row) {
     if (ssd1306_moveTo(row, 1)) {
         ssd1306_writeRawDataZeros(displayWidth);
