@@ -8,8 +8,7 @@
 #include "ssd1306.h"
 #include "system.h"
 
-bool processInput(const uint8_t* data, const uint8_t count);
-bool processText(const uint8_t* data, const uint8_t count, const bool useLargeFont);
+bool processInput(const uint8_t* data, const uint8_t count, bool* out_LastUseLarge);
 bool processCommand(const uint8_t* data, const uint8_t count);
 void initOled(void);
 uint8_t nibbleToHex(const uint8_t value);
@@ -40,6 +39,7 @@ void main(void) {
 
     led_activity_off();
     
+    bool lastUseLarge = false;
     while(true) {
         if (LedTimeout != LED_TIMEOUT_NONE) {
             if (LedTimeout == 0) {
@@ -100,7 +100,7 @@ void main(void) {
                 uint8_t eolChar = InputBuffer[i];  // this'll be EOL eventually
 
                 if ((eolChar == 0x0A) || (eolChar == 0x0D)) {  // start line processing on either CR or LF
-                    if (!processInput(&InputBuffer[offset], i - offset)) {
+                    if (!processInput(&InputBuffer[offset], i - offset, &lastUseLarge)) {
                         OutputBufferAppend('!');  // if there's any error, return exclamation point
                     }
                     OutputBufferAppend(eolChar);
@@ -137,57 +137,53 @@ void initOled(void) {
 }
 
 
-bool processInput(const uint8_t* data, const uint8_t count) {
-    uint8_t dataCount = count;
-    bool wasOk;
+bool processInput(const uint8_t* data, const uint8_t count, bool* out_LastUseLarge) {
     if (*data == 0x09) {  // HT: command mode
-        data++;
-        dataCount--;
-        wasOk = processCommand(data, dataCount);
+        return processCommand(++data, count - 1);
     } else {
+        if (count == 0) {  // if line is empty, process it more
+            ssd1306_moveToNextRow();
+            if (*out_LastUseLarge) {  // extra move for large font
+                ssd1306_moveToNextRow();
+                *out_LastUseLarge = false;
+            }
+            return true;
+        }
+
+        bool wasOk = true;
         bool useLarge = false;
-        bool processingPrefixes = true;
-        while (processingPrefixes) {
+
+        for (uint8_t i = 0; i < count; i++) {
             switch (*data) {
                 case 0x07:  // BEL: clear screen
                     ssd1306_clearAll();
-                    data++;
-                    dataCount--;
                     break;
 
                 case 0x08:  // BS: move to origin
                     ssd1306_moveTo(1, 1);
-                    data++;
-                    dataCount--;
                     break;
 
                 case 0x0B:  // VT: double-size font
-                    data++;
-                    dataCount--;
-                    useLarge = true;
+                    useLarge = !useLarge;
                     break;
 
                 case 0x0C:  // FF: clear remaining
-                    data++;
-                    dataCount--;
                     ssd1306_clearRemaining();
                     break;
 
                 default:
-                    processingPrefixes = false;  // special characters can only be at the beginning of line
+                    if ((*data >= 32) && (*data <= 126)) {  // ignore ASCII control characters
+                        wasOk &= ssd1306_writeCharacter(*data, useLarge);
+                    }
                     break;
             }
-            if (dataCount == 0) { break; }
+
+            data++;
         }
 
-        if (dataCount > 0) {
-            wasOk &= processText(data, dataCount, useLarge);
-        } else {
-            ssd1306_moveToNextRow();
-            if (useLarge) { ssd1306_moveToNextRow(); }  //extra move for large font
-        }
+        *out_LastUseLarge = useLarge;
+        return wasOk;
     }
-    return wasOk;
 }
 
 
@@ -196,11 +192,6 @@ bool processText(const uint8_t* data, const uint8_t count, const bool useLargeFo
     for (uint8_t i = 0; i < count; i++) {
         uint8_t value = *data;
         if (value >= 32) {
-            if (useLargeFont) {
-                ok &= ssd1306_writeCharacter(value, true);
-            } else {
-                ok &= ssd1306_writeCharacter(value, false);
-            }
         } else {
             ok = false;
         }
@@ -210,6 +201,9 @@ bool processText(const uint8_t* data, const uint8_t count, const bool useLargeFo
 }
 
 bool processCommand(const uint8_t* data, const uint8_t count) {
+    OutputBufferAppend(nibbleToHex(count >> 4));
+    OutputBufferAppend(nibbleToHex(count >> 0));
+
     switch (*data) {
 
         case '#': {  // screen size

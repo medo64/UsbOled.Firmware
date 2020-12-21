@@ -32,51 +32,47 @@ it will stay on the same line. Please note that if you send `CRLF` as line
 ending, the first line ending (`CR`) will write the text and the second one
 will move cursor to the next line.
 
-Characters lower than ASCII 32 or higher than ASCII 126 are ignored unless
-specified explicitly as an escape character.
+Characters lower than ASCII 32 are ignored unless they are listed in escape
+characters. Characters higher than ASCII 126 are just ignored.
 
 
 #### Escape characters ####
 
 ##### `0x07` `BEL` (`\a`) #####
 
-Clears display and moves cursor to the upper-left corner. Can only be used as
-a first character in line. Usage within text will be ignored. If this is the
-only character in line, cursor will not move to the next line
+Clears display and moves cursor to the upper-left corner.
 
 ##### `0x08` `BS` (`\b`) #####
 
 Backspace will cause cursor to be moved into the upper left corner. Display
-will not be cleared. Can only be used as a first character in line. Usage
-within text will be ignored.  If this is the only character in line, cursor
-will not move to the next line.
+will not be cleared.
 
 ##### `0x09` `HT` (`\t`) #####
 
-Tab will switch device into the "Command Mode" thus treating rest of the line
-as a command. Can only be used as a first character in line. Usage within text
-will be ignored. It's processed only as a first character in line. Command
-mode stops once `LF` or `CR` is detected and command has been executed.
+If line starts with tab character (`HT`), the rest of the line will be treated
+as a command. Usage within text will be ignored. Command mode is limited only
+to line being processed.
 
 ##### `0x0A` `LF` (`\n`) #####
 
-Line feed character will print out all previously sent characters and move the
-cursor to the next line. After the fourth line no movement will be made until
-line is reset (e.g. via `BS` escape character). If used to execute a command,
-no cursor movement will occur.
+Line feed character will start line processing. In Text mode it will show
+characters on OLED display. If no characters are present before it, it will
+move cursor to the next line. If previous line had double-height text, two
+movements will be made. After the fourth line no movement will be made until
+the current line is reset (e.g. via `BS` escape character).
 
 ##### `0x0B` `VT` (`\v`) #####
 
-Text following it will use double-height font (8x16). Can only be used as a
-first character in line. Usage within text will be ignored.
+Text following it will use double-height font (8x16). If used again, it will
+switch double-height off (8x8 character size).
 
 ##### `0x0C` `FF` (`\f`) #####
 
-Clears the rest of the line leaving cursor at the current position.
+Clears the rest of the line leaving the cursor at the current position.
 
 ##### `0x0D` `CR` (`\r`) #####
 
-Used just in pair with `LF`.
+Functions the same way as `LF`.
 
 
 ### Command mode ###
