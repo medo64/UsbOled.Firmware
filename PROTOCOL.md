@@ -95,13 +95,14 @@ Either output will exit the command mode.
 #### `#` (set size) ####
 
 This command will set screen size. Argument is either `A` (128x64) or `B`
-(128x32). Settings are not automatically saved but require `^` command.
+(128x32). Changes to setting are saved immediately. If called without
+argument, the current value will be returned.
 
 ##### Example 1 (128x64) #####
 
 |           |                                                                |
 |-----------|----------------------------------------------------------------|
-| Request:  | `#A` `LF`                                                      |
+| Request:  | `HT` `#A` `LF`                                                 |
 | Response: | `LF`                                                           |
 | Result:   | Display size is 128x64.                                        |
 
@@ -109,59 +110,87 @@ This command will set screen size. Argument is either `A` (128x64) or `B`
 
 |           |                                                                |
 |-----------|----------------------------------------------------------------|
-| Request:  | `#B` `LF`                                                      |
+| Request:  | `HT` `#B` `LF`                                                 |
 | Response: | `LF`                                                           |
 | Result:   | Display size is 128x32.                                        |
 
-##### Example 3 (invalid) #####
+##### Example 3 (current value) #####
 
 |           |                                                                |
 |-----------|----------------------------------------------------------------|
-| Request:  | `#Z` `LF`                                                      |
+| Request:  | `HT` `#` `LF`                                                  |
+| Response: | `A` `LF`                                                       |
+| Result:   | Currently set display is 128x64.                               |
+
+##### Example 4 (invalid) #####
+
+|           |                                                                |
+|-----------|----------------------------------------------------------------|
+| Request:  | `HT` `#Z` `LF`                                                 |
 | Response: | `!` `LF`                                                       |
 | Result:   | No change to display size.                                     |
+
+
+#### `*` (brightness) ####
+
+This command will set OLED contrast/brightness. Argument is value in
+hexadecimal format. Changes to setting are saved immediately. If called
+without argument, the current value will be returned.
+
+##### Example 1 (minimum) #####
+
+|           |                                                                |
+|-----------|----------------------------------------------------------------|
+| Request:  | `HT` `*00` `LF`                                                |
+| Response: | `LF`                                                           |
+| Result:   | Display is at minimum brightness.                              |
+
+##### Example 2 (maximum) #####
+
+|           |                                                                |
+|-----------|----------------------------------------------------------------|
+| Request:  | `HT` `*FF` `LF`                                                |
+| Response: | `LF`                                                           |
+| Result:   | Display is at maximum brightness.                              |
+
+##### Example 3 (current value) #####
+
+|           |                                                                |
+|-----------|----------------------------------------------------------------|
+| Request:  | `HT` `*` `LF`                                                  |
+| Response: | `CF` `LF`                                                      |
+| Result:   | Display brightness is at 0xCF.                                 |
 
 
 #### `@` (set address) ####
 
 This command will set OLED module I2C address. Argument is address in
-hexadecimal form. Settings are not automatically saved but require `^`
-command.
+hexadecimal format. Changes to setting are saved immediately. If called
+without argument, the current value will be returned.
 
-##### Example 1 (0x3C) #####
+##### Example 1 (0x3D) #####
 
 |           |                                                                |
 |-----------|----------------------------------------------------------------|
-| Request:  | `@3C` `LF`                                                     |
+| Request:  | `HT` `@3D` `LF`                                                |
 | Response: | `LF`                                                           |
-| Result:   | OLED module is at 0x3C.                                        |
+| Result:   | OLED module should use address 0x3D.                           |
 
-
-#### `?` (print settings) ####
-
-This parameter will print current setting values separated by space. Screen
-size will be prefixed by pound sign (`#`) and I2C address will be prefixed by
-at sign (`@`).
-
-##### Example (default) #####
+##### Example 2 (current value) #####
 
 |           |                                                                |
 |-----------|----------------------------------------------------------------|
-| Request:  | `?` `LF`                                                       |
-| Response: | `@C #A` `LF`                                                   |
-| Result:   | Display size is 128x64 and module address is `0x3C`.           |
-
-
-#### `^` (save settings) ####
-
-This parameter-less command saves newly changed settings.
+| Request:  | `HT` `@` `LF`                                                  |
+| Response: | `3C` `LF`                                                      |
+| Result:   | OLED module is at 0x3C.                                        |
 
 
 #### `~` (restore defaults) ####
 
 This parameter-less command restores all setting to their default value. This
-means OLED module is assumed to be on `0x3C` I2C address and display size is
-128x64. Settings are automatically committed to permantent memory.
+means OLED module is assumed to be on `0x3C` I2C address, display size is
+128x64, and brightness is at `0xCF`. Settings are automatically committed to
+permantent memory.
 
 ##### Example (default) #####
 
@@ -169,7 +198,7 @@ means OLED module is assumed to be on `0x3C` I2C address and display size is
 |-----------|----------------------------------------------------------------|
 | Request:  | `~` `LF`                                                       |
 | Response: | `LF`                                                           |
-| Result:   | Display size is 128x64 and module address is `0x3C`.           |
+| Result:   | All settings are back to default.                              |
 
 
 #### `c` (custom character)  ####

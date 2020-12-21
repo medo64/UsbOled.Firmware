@@ -209,61 +209,56 @@ bool processText(const uint8_t* data, const uint8_t count, const bool useLargeFo
 bool processCommand(const uint8_t* data, const uint8_t count) {
     switch (*data) {
 
-        case '#': {  // set screen size
-            if (count == 2) {
+        case '#': {  // screen size
+            if (count == 1) {  // get screen size
+                if (settings_getDisplayHeight() == 32) {
+                    OutputBufferAppend('B');
+                } else {
+                    OutputBufferAppend('A');
+                }
+                return true;
+            } else if (count == 2) {  // set screen size
                 switch(*++data) {
                     case 'A': settings_setDisplayHeight(64); break;
                     case 'B': settings_setDisplayHeight(32); break;
                     default: return false;
                 }
+                settings_save();
                 initOled();
                 return true;
             }
         }
 
-        case '*': {  // set brightness
-            if (count == 3) {
+        case '*': {  // brightness
+            if (count == 1) {  // get brightness
+                uint8_t brightness = settings_getBrightness();
+                OutputBufferAppend(nibbleToHex(brightness >> 4));  // high nibble
+                OutputBufferAppend(nibbleToHex(brightness));  // low nibble
+                return true;
+            } else if (count == 3) {  // set brightness
                 uint8_t brightness;
                 if (!hexToNibble(*++data, &brightness)) { return false; }
                 if (!hexToNibble(*++data, &brightness)) { return false; }
                 settings_setBrightness(brightness);
+                settings_save();
                 ssd1306_setContrast(brightness);
                 return true;
             }
         }
 
-        case '?': {  // print settings
-            if (count == 1) {
+        case '@': {  // I2C address
+            if (count == 1) {  // get I2C address
                 uint8_t address = settings_getOledI2CAddress();
-                uint8_t height = settings_getDisplayHeight();
-                if (OutputBufferCount > OUTPUT_BUFFER_HIGH) { return false; }  // if we're high on usage, reject printing stuff out
-                OutputBufferAppend('@');
                 OutputBufferAppend(nibbleToHex(address >> 4));  // high nibble
                 OutputBufferAppend(nibbleToHex(address));  // low nibble
-                OutputBufferAppend(' ');
-                OutputBufferAppend('#');
-                switch (height) {
-                    case 32: OutputBufferAppend('B'); break;
-                    default: OutputBufferAppend('A'); break;
-                }
                 return true;
-            }
-        }
-
-        case '@': {  // select address
-            if (count == 3) {
+            } else if (count == 3) {  // set I2C address
                 uint8_t address;
                 if (!hexToNibble(*++data, &address)) { return false; }
                 if (!hexToNibble(*++data, &address)) { return false; }
                 settings_setOledI2CAddress(address);
-                initOled();
-                return true;
-            }
-        }
-
-        case '^': {  // save permanently
-            if (count == 1) {
                 settings_save();
+                initOled();
                 return true;
             }
         }
