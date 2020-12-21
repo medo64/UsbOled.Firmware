@@ -44,7 +44,7 @@ uint8_t displayRows;
 uint8_t currentRow;
 uint8_t currentColumn;
 
-void ssd1306_init(const uint8_t address, const uint8_t width, const uint8_t height) {
+void ssd1306_init(const uint8_t address, const uint16_t speedKHz, const uint8_t width, const uint8_t height) {
     displayAddress = address;
     displayWidth = width;
     displayHeight = height;
@@ -64,7 +64,7 @@ void ssd1306_init(const uint8_t address, const uint8_t width, const uint8_t heig
         TRISC1 = !TRISC1;                     // toggle data line
     }
 
-    i2c_master_init();
+    i2c_master_init(speedKHz);
 
     ssd1306_writeRawCommand1(SSD1306_SET_DISPLAY_OFF);                                    // Set Display Off
     ssd1306_writeRawCommand2(SSD1306_SET_DISPLAY_CLOCK_DIVIDE_RATIO, 0x80);               // Set Display Clock Divide Ratio/Oscillator Frequency

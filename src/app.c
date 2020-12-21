@@ -126,7 +126,7 @@ void __interrupt() SYS_InterruptHigh(void) {
 
 
 void initOled(void) {
-    ssd1306_init(settings_getI2CAddress(), 128, settings_getDisplayHeight());
+    ssd1306_init(settings_getI2CAddress(), settings_getI2CSpeed(), 128, settings_getDisplayHeight());
     ssd1306_clearAll();
 
     ssd1306_writeText("    USB OLED    ", true);
@@ -257,6 +257,31 @@ bool processCommand(const uint8_t* data, const uint8_t count) {
                 if (!hexToNibble(*++data, &address)) { return false; }
                 if (!hexToNibble(*++data, &address)) { return false; }
                 settings_setI2CAddress(address);
+                settings_save();
+                initOled();
+                return true;
+            }
+        }
+
+        case '^': {  // I2C speed
+            if (count == 1) {  // get I2C speed
+                uint16_t speed = settings_getI2CSpeed();
+                OutputBufferAppend(nibbleToHex(speed >> 12));  // upper high nibble
+                OutputBufferAppend(nibbleToHex(speed >> 8));   // upper low nibble
+                OutputBufferAppend(nibbleToHex(speed >> 4));   // lower high nibble
+                OutputBufferAppend(nibbleToHex(speed));        // lower low nibble
+                return true;
+            } else if ((count == 3) || (count == 5)) {  // set I2C speed
+                uint16_t_VAL speed;
+                if (count == 5) {
+                    if (!hexToNibble(*++data, &speed.byte.HB)) { return false; }
+                    if (!hexToNibble(*++data, &speed.byte.HB)) { return false; }
+                } else {
+                    speed.byte.HB = 0;
+                }
+                if (!hexToNibble(*++data, &speed.byte.LB)) { return false; }
+                if (!hexToNibble(*++data, &speed.byte.LB)) { return false; }
+                settings_setI2CSpeed(speed.Val);
                 settings_save();
                 initOled();
                 return true;

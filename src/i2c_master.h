@@ -6,7 +6,7 @@
 
 
 /** Initializes I2C as a master. */
-void i2c_master_init();
+void i2c_master_init(const uint16_t speedKHz);
 
 
 /** Starts a read operation. */

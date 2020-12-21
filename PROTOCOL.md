@@ -164,7 +164,7 @@ without argument, the current value will be returned.
 
 #### `@` (set address) ####
 
-This command will set OLED module I2C address. Argument is address in
+This command will set OLED module I²C address. Argument is address in
 hexadecimal format. Changes to setting are saved immediately. If called
 without argument, the current value will be returned.
 
@@ -185,12 +185,43 @@ without argument, the current value will be returned.
 | Result:   | OLED module is at 0x3C.                                        |
 
 
+#### `^` (set speed) ####
+
+This command will set OLED module I²C speed in kHz. Argument is address in
+hexadecimal format. Changes to setting are saved immediately. If called
+without argument, the current value will be returned.
+
+##### Example 1 (100 kHz) #####
+
+|           |                                                                |
+|-----------|----------------------------------------------------------------|
+| Request:  | `HT` `^64` `LF`                                                |
+| Response: | `LF`                                                           |
+| Result:   | Speed is set to 100 kHz.                                       |
+
+##### Example 2 (400 kHz) #####
+
+|           |                                                                |
+|-----------|----------------------------------------------------------------|
+| Request:  | `HT` `@0190` `LF`                                                |
+| Response: | `LF`                                                           |
+| Result:   | Speed is set to 100 kHz.                                       |
+
+##### Example 3 (current value) #####
+
+|           |                                                                |
+|-----------|----------------------------------------------------------------|
+| Request:  | `HT` `^` `LF`                                                  |
+| Response: | `0064` `LF`                                                    |
+| Result:   | Speed is 100 kHz.                                              |
+
+
 #### `~` (restore defaults) ####
 
 This parameter-less command restores all setting to their default value. This
-means OLED module is assumed to be on `0x3C` I2C address, display size is
-128x64, and brightness is at `0xCF`. Settings are automatically committed to
-permantent memory.
+means OLED module is assumed to be on `0x3C` I²C address, working at 100 kHz,
+display size is 128x64, and brightness is at `0xCF`. Settings are
+automatically committed to permantent memory.
 
 ##### Example (default) #####
 
