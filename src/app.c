@@ -168,7 +168,7 @@ bool processInput(const uint8_t* data, const uint8_t count, bool* out_LastUseLar
                     break;
 
                 case 0x0C:  // FF: clear remaining
-                    ssd1306_clearRemaining();
+                    ssd1306_clearRemaining(useLarge);
                     break;
 
                 default:

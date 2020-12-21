@@ -116,9 +116,16 @@ void ssd1306_clearAll() {
     ssd1306_moveTo(1, 1);
 }
 
-void ssd1306_clearRemaining() {
-    ssd1306_writeRawDataZeros((displayColumns - currentColumn) << 3);
-    ssd1306_moveTo(currentRow, currentColumn);
+void ssd1306_clearRemaining(const bool isLarge) {
+    uint8_t columnCount = (displayColumns - currentColumn) << 3;
+    uint8_t nextColumn = currentColumn + 1;
+    uint8_t nextRow = currentRow + 1;
+    ssd1306_writeRawDataZeros(columnCount);
+    if (isLarge) {
+        ssd1306_moveTo(nextRow + 1, nextColumn);
+        ssd1306_writeRawDataZeros(columnCount);
+    }
+    ssd1306_moveTo(nextRow, nextColumn);
 }
 
 bool ssd1306_clearRow(const uint8_t row) {
