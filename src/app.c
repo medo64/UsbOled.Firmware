@@ -186,20 +186,6 @@ bool processInput(const uint8_t* data, const uint8_t count, bool* out_LastUseLar
     }
 }
 
-
-bool processText(const uint8_t* data, const uint8_t count, const bool useLargeFont) {
-    bool ok = true;
-    for (uint8_t i = 0; i < count; i++) {
-        uint8_t value = *data;
-        if (value >= 32) {
-        } else {
-            ok = false;
-        }
-        data++;
-    }
-    return ok;
-}
-
 bool processCommand(const uint8_t* data, const uint8_t count) {
     switch (*data) {
 
