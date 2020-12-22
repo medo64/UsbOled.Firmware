@@ -27,7 +27,7 @@ uint8_t OutputBufferCount = 0;
 #define OutputBufferAppend(X)  OutputBuffer[OutputBufferCount] = (X); OutputBufferCount++;
 
 
-void buffer_copy(uint8_t* destination, uint8_t* source, const uint8_t count);
+void buffer_copy(uint8_t* destination, const uint8_t* source, const uint8_t count);
 
 #endif	/* BUFFER_H */
 
