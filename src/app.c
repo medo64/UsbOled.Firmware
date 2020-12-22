@@ -138,18 +138,18 @@ void initOled(void) {
 
 
 bool processInput(const uint8_t* data, const uint8_t count, bool* out_LastUseLarge) {
+    if (count == 0) {  // if line is empty, process it more
+        ssd1306_moveToNextRow();
+        if (*out_LastUseLarge) {  // extra move for large font
+            ssd1306_moveToNextRow();
+            *out_LastUseLarge = false;
+        }
+        return true;
+    }
+
     if (*data == 0x09) {  // HT: command mode
         return processCommand(++data, count - 1);
     } else {
-        if (count == 0) {  // if line is empty, process it more
-            ssd1306_moveToNextRow();
-            if (*out_LastUseLarge) {  // extra move for large font
-                ssd1306_moveToNextRow();
-                *out_LastUseLarge = false;
-            }
-            return true;
-        }
-
         bool wasOk = true;
         bool useLarge = false;
 
