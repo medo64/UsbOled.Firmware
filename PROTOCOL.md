@@ -51,7 +51,8 @@ will not be cleared.
 
 If line starts with tab character (`HT`), the rest of the line will be treated
 as a command. Usage within text will be ignored. Command mode is limited only
-to line being processed.
+to line being processed. If null character (`NUL`) is encountered, command
+processing will stop and rest of line will revert to text mode.
 
 ##### `0x0A` `LF` (`\n`) #####
 
@@ -79,7 +80,7 @@ Functions the same way as `LF`.
 
 Command mode is entered using `HT` (`0x09`) character as the first character
 of the new line,  followed by a single character command. Command will be
-processed once `LF` or `CR` is detected.
+processed until `LF`, `CR`, or `NUL` is detected.
 
 If command is successful, it will echo a `LF` or `CR`, otherwise it will
 echo exclamation point (`!`) followed by optional text and finished with `LF`

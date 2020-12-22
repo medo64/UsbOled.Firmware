@@ -137,7 +137,7 @@ void initOled(void) {
 }
 
 
-bool processInput(const uint8_t* data, const uint8_t count, bool* out_LastUseLarge) {
+bool processInput(const uint8_t* dataIn, const uint8_t count, bool* out_LastUseLarge) {
     if (count == 0) {  // if line is empty, process it more
         ssd1306_moveToNextRow();
         if (*out_LastUseLarge) {  // extra move for large font
@@ -147,43 +147,58 @@ bool processInput(const uint8_t* data, const uint8_t count, bool* out_LastUseLar
         return true;
     }
 
-    if (*data == 0x09) {  // HT: command mode
-        return processCommand(++data, count - 1);
-    } else {
-        bool wasOk = true;
-        bool useLarge = false;
+    uint8_t* data = (uint8_t*)dataIn;
+    bool wasOk = true;
+    bool useLarge = false;
 
-        for (uint8_t i = 0; i < count; i++) {
-            switch (*data) {
-                case 0x07:  // BEL: clear screen
-                    ssd1306_clearAll();
-                    break;
+    for (uint8_t i = 0; i < count; i++) {
+        switch (*data) {
+            case 0x07:  // BEL: clear screen
+                ssd1306_clearAll();
+                break;
 
-                case 0x08:  // BS: move to origin
-                    ssd1306_moveTo(1, 1);
-                    break;
+            case 0x08:  // BS: move to origin
+                ssd1306_moveTo(1, 1);
+                break;
 
-                case 0x0B:  // VT: double-size font
-                    useLarge = !useLarge;
-                    break;
-
-                case 0x0C:  // FF: clear remaining
-                    ssd1306_clearRemaining(useLarge);
-                    break;
-
-                default:
-                    if ((*data >= 32) && (*data <= 126)) {  // ignore ASCII control characters
-                        wasOk &= ssd1306_writeCharacter(*data, useLarge);
+            case 0x09: {  // HT: command mode
+                uint8_t* cmdData = data + 1;
+                uint8_t cmdIndex = count;
+                for (uint8_t j = i + 1; j < count; j++) {
+                    if (*cmdData == 0) {
+                        cmdIndex = j;
+                        break;
                     }
-                    break;
-            }
+                    cmdData++;
+                }
+                uint8_t cmdCount = cmdIndex - i - 1;
+                if (cmdCount > 0) {
+                    wasOk &= processCommand(++data, cmdCount);
+                }
+                data = cmdData;
+                i = cmdIndex;
+            } break;
 
-            data++;
+            case 0x0B:  // VT: double-size font
+                useLarge = !useLarge;
+                break;
+
+            case 0x0C:  // FF: clear remaining
+                ssd1306_clearRemaining(useLarge);
+                break;
+
+            default:
+                if ((*data >= 32) && (*data <= 126)) {  // ignore ASCII control characters
+                    wasOk &= ssd1306_writeCharacter(*data, useLarge);
+                }
+                break;
         }
 
-        *out_LastUseLarge = useLarge;
-        return wasOk;
+        data++;
     }
+
+    *out_LastUseLarge = useLarge;
+    return wasOk;
 }
 
 bool processCommand(const uint8_t* data, const uint8_t count) {
