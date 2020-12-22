@@ -201,9 +201,6 @@ bool processText(const uint8_t* data, const uint8_t count, const bool useLargeFo
 }
 
 bool processCommand(const uint8_t* data, const uint8_t count) {
-    OutputBufferAppend(nibbleToHex(count >> 4));
-    OutputBufferAppend(nibbleToHex(count >> 0));
-
     switch (*data) {
 
         case '#': {  // screen size
