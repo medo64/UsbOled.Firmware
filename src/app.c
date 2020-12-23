@@ -65,11 +65,15 @@ void main(void) {
             led_activity_on(); LedTimeout = LED_TIMEOUT;
             for (uint8_t i = 0; i < readCount; i++) {  // copy to buffer
                 uint8_t value = UsbReadBuffer[i];
-                if (InputBufferCount < INPUT_BUFFER_MAX) {
+                if (InputBufferCorrupted && ((value == 0x0A) || (value == 0x0D))) {
+                    InputBufferCount = 0;  // clear the whole buffer
+                    InputBufferCorrupted = false;
+                } else if (InputBufferCount < INPUT_BUFFER_MAX) {
                     InputBuffer[InputBufferCount] = value;
                     InputBufferCount++;
                 } else {
                     InputBufferCorrupted = true;  // no more buffer; darn it
+                    LedTimeout = LED_TIMEOUT_NONE;  // turn on LED permanently
                 }
             }
         }
