@@ -301,24 +301,15 @@ bool processCommand(const uint8_t* data, const uint8_t count) {
             break;
 
         case 'c':
-            if (count == 17) {
-                uint8_t customCharData[8];
-                for (uint8_t i = 0; i < 8; i++) {
-                    if (!hexToNibble(*++data, &customCharData[i])) { return false; }
-                    if (!hexToNibble(*++data, &customCharData[i])) { return false; }
-                }
-                return ssd1306_drawCharacter(&customCharData[0], 8, false);
-            }
-            break;
-
         case 'C':
-            if (count == 33) {
+            if ((count == 17) || (count == 33)) {
+                uint8_t dataCount = (count - 1) >> 1;
                 uint8_t customCharData[16];
-                for (uint8_t i = 0; i < 16; i++) {
+                for (uint8_t i = 0; i < dataCount; i++) {
                     if (!hexToNibble(*++data, &customCharData[i])) { return false; }
                     if (!hexToNibble(*++data, &customCharData[i])) { return false; }
                 }
-                return ssd1306_drawCharacter(&customCharData[0], 16, true);
+                return ssd1306_drawCharacter(&customCharData[0], dataCount);
             }
             break;
 

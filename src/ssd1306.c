@@ -165,12 +165,11 @@ bool ssd1306_moveToNextRow() {
 }
 
 
-bool ssd1306_drawCharacter(const uint8_t* data, const uint8_t count, const bool isLarge) {
-    if (!isLarge && (count < 8)) { return false; }  // must be 8x8 pixels - 8 bytes
-    if (isLarge && (count < 16)) { return false; }  // must be 8x16 pixels - 16 bytes
+bool ssd1306_drawCharacter(const uint8_t* data, const uint8_t count) {
+    if ((count != 8) && (count != 16)) { return false; }  // must be 8x8 or 8x16 pixels - 8/16 bytes
     if (currentColumn >= displayColumns) { return false; }
 
-    if (isLarge) {
+    if (count >= 16) {
         ssd1306_writeRawCommand1(SSD1306_SET_PAGE_START_ADDRESS | (currentRow + 1));
         ssd1306_writeRawData(&data[8], 8);
 
@@ -205,7 +204,7 @@ bool ssd1306_writeCharacter(const uint8_t value, const bool isLarge) {
             }
         }
     }
-    return ssd1306_drawCharacter(data, 16, isLarge);
+    return ssd1306_drawCharacter(data, isLarge ? 16 : 8);
 }
 
 bool ssd1306_writeText(const uint8_t* text, const bool isLarge) {
