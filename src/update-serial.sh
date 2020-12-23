@@ -12,7 +12,7 @@ trap 'echo "$ANSI_RESET"' EXIT SIGHUP SIGINT SIGQUIT SIGPIPE SIGTERM
 
 VERBOSE=0
 FILE="./dist/default/production/src.production.hex"
-LOCATIONS="3E00:4,8,12 3E10:0,4,8,12 3E20:0,4,8,12 3E30:0,4"
+LOCATIONS="3E0C:8,12 3E1C:0,4,8,12 3E2C:0,4"
 
 if [[ -f $FILE ]]; then
     cp $FILE $FILE.bak
@@ -27,12 +27,12 @@ if [[ -f $FILE ]]; then
         if [[ $VERBOSE -ge 2 ]]; then echo "${ANSI_BLUE}    $LINE${ANSI_RESET}"; fi
 
         CHECKSUM=0
-        NEW_LINE=`echo $LINE | sed 's/..$//'`
+        NEW_LINE=`echo $LINE | sed -b 's/..$//'`
         for OFFSET in $OFFSETS; do
             if [[ $VERBOSE -eq 0 ]]; then echo -n "."; fi
             NEW_OFFSET=$(( 9 + $OFFSET * 2 ))
             NEW_VALUE=$(( 30 + $RANDOM % 10 ))
-            NEW_LINE=`echo $NEW_LINE | sed "s/^\\(.\\{$NEW_OFFSET\\}\\)../\\1$NEW_VALUE/"`
+            NEW_LINE=`echo $NEW_LINE | sed -b "s/^\\(.\\{$NEW_OFFSET\\}\\)../\\1$NEW_VALUE/"`
         done
 
         for ((I = 1; I <= $(( `echo $NEW_LINE | wc -c` - 2 )); I+=2)); do
@@ -44,7 +44,7 @@ if [[ -f $FILE ]]; then
         NEW_LINE="$NEW_LINE$CHECKSUM_HEX"
 
         if [[ $VERBOSE -ge 1 ]]; then echo "${ANSI_BLUE}    $NEW_LINE${ANSI_RESET}"; fi
-        sed -i "s/$LINE/$NEW_LINE/" $FILE
+        sed -bi "s/$LINE/$NEW_LINE/" $FILE
     done
 
     if [[ $VERBOSE -eq 0 ]]; then echo "${ANSI_RESET}"; fi
