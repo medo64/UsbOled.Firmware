@@ -94,9 +94,10 @@ void settings_setI2CSpeed(const uint16_t value) {
 
 
 uint8_t settings_getDisplayHeight() {
-    switch (Settings.DisplayHeight) {
-        case 32: return 32;
-        default: return 64;
+    if (Settings.DisplayHeight == 32) {
+        return 32;
+    } else {
+        return 64;
     }
 }
 

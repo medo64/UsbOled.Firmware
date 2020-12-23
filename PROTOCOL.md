@@ -205,7 +205,7 @@ without argument, the current value will be returned.
 
 |           |                                                                |
 |-----------|----------------------------------------------------------------|
-| Request:  | `HT` `^64` `LF`                                                |
+| Request:  | `HT` `^0064` `LF`                                              |
 | Response: | `LF`                                                           |
 | Result:   | Speed is set to 100 kHz.                                       |
 
@@ -213,7 +213,7 @@ without argument, the current value will be returned.
 
 |           |                                                                |
 |-----------|----------------------------------------------------------------|
-| Request:  | `HT` `@0190` `LF`                                                |
+| Request:  | `HT` `@0190` `LF`                                              |
 | Response: | `LF`                                                           |
 | Result:   | Speed is set to 100 kHz.                                       |
 

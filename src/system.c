@@ -11,10 +11,4 @@ void init(void) {
     OSCCONbits.SPLLEN = 1;     // PLL is enabled
     ACTCONbits.ACTSRC = 1;     // The HFINTOSC oscillator is tuned using Fll-speed USB events
     ACTCONbits.ACTEN = 1;      // ACT is enabled, updates to OSCTUNE are exclusive to the ACT
-    
-    // USB Init
-    //LATA0 = 0;   // D+
-    //LATA1 = 0;   // D-
-    //TRISA0 = 0;  // D+
-    //TRISA1 = 0;  // D-
 }

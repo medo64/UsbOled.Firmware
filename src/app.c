@@ -277,14 +277,10 @@ bool processCommand(const uint8_t* data, const uint8_t count) {
                 OutputBufferAppend(nibbleToHex(speed >> 4));   // lower high nibble
                 OutputBufferAppend(nibbleToHex(speed));        // lower low nibble
                 return true;
-            } else if ((count == 3) || (count == 5)) {  // set I2C speed
+            } else if (count == 5) {  // set I2C speed
                 uint16_t_VAL speed;
-                if (count == 5) {
-                    if (!hexToNibble(*++data, &speed.byte.HB)) { return false; }
-                    if (!hexToNibble(*++data, &speed.byte.HB)) { return false; }
-                } else {
-                    speed.byte.HB = 0;
-                }
+                if (!hexToNibble(*++data, &speed.byte.HB)) { return false; }
+                if (!hexToNibble(*++data, &speed.byte.HB)) { return false; }
                 if (!hexToNibble(*++data, &speed.byte.LB)) { return false; }
                 if (!hexToNibble(*++data, &speed.byte.LB)) { return false; }
                 settings_setI2CSpeed(speed.Val);
