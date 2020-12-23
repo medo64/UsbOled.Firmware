@@ -208,7 +208,7 @@ bool processInput(const uint8_t* dataIn, const uint8_t count, bool* out_LastUseL
 bool processCommand(const uint8_t* data, const uint8_t count) {
     switch (*data) {
 
-        case '#': {  // screen size
+        case '#':  // screen size
             if (count == 1) {  // get screen size
                 if (settings_getDisplayHeight() == 32) {
                     OutputBufferAppend('B');
@@ -226,16 +226,16 @@ bool processCommand(const uint8_t* data, const uint8_t count) {
                 initOled();
                 return true;
             }
-        }
+            break;
 
-        case '%': {  // reset
+        case '%':  // reset
             if (count == 1) {  // reboot
                 reset();
                 return true;
             }
-        }
+            break;
 
-        case '*': {  // brightness
+        case '*':  // brightness
             if (count == 1) {  // get brightness
                 uint8_t brightness = settings_getDisplayBrightness();
                 OutputBufferAppend(nibbleToHex(brightness >> 4));  // high nibble
@@ -250,9 +250,9 @@ bool processCommand(const uint8_t* data, const uint8_t count) {
                 ssd1306_setContrast(brightness);
                 return true;
             }
-        }
+            break;
 
-        case '@': {  // I2C address
+        case '@':  // I2C address
             if (count == 1) {  // get I2C address
                 uint8_t address = settings_getI2CAddress();
                 OutputBufferAppend(nibbleToHex(address >> 4));  // high nibble
@@ -267,9 +267,9 @@ bool processCommand(const uint8_t* data, const uint8_t count) {
                 initOled();
                 return true;
             }
-        }
+            break;
 
-        case '^': {  // I2C speed
+        case '^':  // I2C speed
             if (count == 1) {  // get I2C speed
                 uint16_t speed = settings_getI2CSpeed();
                 OutputBufferAppend(nibbleToHex(speed >> 12));  // upper high nibble
@@ -288,9 +288,9 @@ bool processCommand(const uint8_t* data, const uint8_t count) {
                 initOled();
                 return true;
             }
-        }
+            break;
 
-        case '~': {  // defaults
+        case '~':  // defaults
             if (count == 1) {
                 settings_setI2CAddress(SETTING_DEFAULT_I2C_ADDRESS);
                 settings_setDisplayHeight(SETTING_DEFAULT_DISPLAY_HEIGHT);
@@ -298,9 +298,9 @@ bool processCommand(const uint8_t* data, const uint8_t count) {
                 settings_save();
                 return true;
             }
-        }
+            break;
 
-        case 'c': {
+        case 'c':
             if (count == 17) {
                 uint8_t customCharData[8];
                 for (uint8_t i = 0; i < 8; i++) {
@@ -309,9 +309,9 @@ bool processCommand(const uint8_t* data, const uint8_t count) {
                 }
                 return ssd1306_drawCharacter(&customCharData[0], 8, false);
             }
-        }
+            break;
 
-        case 'C': {
+        case 'C':
             if (count == 33) {
                 uint8_t customCharData[16];
                 for (uint8_t i = 0; i < 16; i++) {
@@ -320,9 +320,9 @@ bool processCommand(const uint8_t* data, const uint8_t count) {
                 }
                 return ssd1306_drawCharacter(&customCharData[0], 16, true);
             }
-        }
+            break;
 
-        case 'm': {
+        case 'm':
             if (count == 3) {
                 uint8_t row = 0;
                 if (!hexToNibble(*++data, &row)) { return false; }
@@ -336,7 +336,7 @@ bool processCommand(const uint8_t* data, const uint8_t count) {
                 if (!hexToNibble(*++data, &column)) { return false; }
                 return ssd1306_moveTo(row, column);
             }
-        }
+            break;
     }
 
     return false;
