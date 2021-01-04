@@ -13,6 +13,9 @@ void ssd1306_displayOff();
 /** Turns display on. */
 void ssd1306_displayOn();
 
+/** Turns display inversion. */
+void ssd1306_displayInvert(bool invert);
+
 /** Sets contrast value. */
 void ssd1306_setContrast(const uint8_t value);
 

@@ -287,6 +287,32 @@ are drawn first.
 | Result:   | Draws box with one empty space around each side.               |
 
 
+#### `i` (inverse) ####
+
+Display will be inverted.
+
+##### Example 1 (invert) #####
+
+|           |                                                                |
+|-----------|----------------------------------------------------------------|
+| Request:  | `i` `LF`                                                       |
+| Response: | `LF`                                                           |
+| Result:   | Display will be inverted.                                      |
+
+
+#### `I` (inverse cancel) ####
+
+Display will not be inverted.
+
+##### Example 1 (cancel invert) #####
+
+|           |                                                                |
+|-----------|----------------------------------------------------------------|
+| Request:  | `I` `LF`                                                       |
+| Response: | `LF`                                                           |
+| Result:   | Display will not be inverted.                                  |
+
+
 #### `m` (move)  ####
 
 Moves cursor to specified row and column. Command takes two parameters, both

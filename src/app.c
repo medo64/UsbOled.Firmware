@@ -313,6 +313,20 @@ bool processCommand(const uint8_t* data, const uint8_t count) {
             }
             break;
 
+        case 'i':
+            if (count == 1) {
+                ssd1306_displayInvert(true);
+                return true;
+            }
+            break;
+
+        case 'I':
+            if (count == 1) {
+                ssd1306_displayInvert(false);
+                return true;
+            }
+            break;
+
         case 'm':
             if (count == 3) {
                 uint8_t row = 0;
