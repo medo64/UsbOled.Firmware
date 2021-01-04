@@ -122,11 +122,11 @@ void main(void) {
 }
 
 
+#if defined(USB_INTERRUPT)
 void __interrupt() SYS_InterruptHigh(void) {
-    #if defined(USB_INTERRUPT)
-        USBDeviceTasks();
-    #endif
+    USBDeviceTasks();
 }
+#endif
 
 
 void initOled(void) {
