@@ -128,6 +128,37 @@ argument, the current value will be returned.
 | Result:   | No change to display size.                                     |
 
 
+
+
+#### `$` (invert) ####
+
+This command will set whether display will be inverted by default.
+
+##### Example 1 (Normal) #####
+
+|           |                                                                |
+|-----------|----------------------------------------------------------------|
+| Request:  | `HT` `$N` `LF`                                                 |
+| Response: | `LF`                                                           |
+| Result:   | Display is not inverted by default.                            |
+
+##### Example 2 (Inverse) #####
+
+|           |                                                                |
+|-----------|----------------------------------------------------------------|
+| Request:  | `HT` `$I` `LF`                                                 |
+| Response: | `LF`                                                           |
+| Result:   | Display is inverted by default.                                |
+
+##### Example 3 (current value) #####
+
+|           |                                                                |
+|-----------|----------------------------------------------------------------|
+| Request:  | `HT` `$` `LF`                                                  |
+| Response: | `N` `LF`                                                       |
+| Result:   | Display is not inverted by default.                            |
+
+
 #### `%` (reset) ####
 
 This command will reboot the device, including it's USB stack.

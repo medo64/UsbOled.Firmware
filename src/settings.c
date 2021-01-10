@@ -9,7 +9,8 @@
                               SETTING_DEFAULT_I2C_SPEED_INDEX,                               \
                               SETTING_DEFAULT_DISPLAY_HEIGHT,                                \
                               SETTING_DEFAULT_DISPLAY_BRIGHTNESS,                            \
-                              0, 0, 0, 0,                                                    \
+                              SETTING_DEFAULT_DISPLAY_INVERSE,                               \
+                              0, 0, 0,                                                       \
                               0, 0, 0, 0, 0, 0, 0, 0,                                        \
                               0, 0, 0, 0, 0, 0, 0, 0,                                        \
                               0, 0, 0, 0, 0, 0, 0, 0                                         \
@@ -22,6 +23,7 @@ typedef struct {
     uint8_t I2CSpeedIndex;
     uint8_t DisplayHeight;
     uint8_t DisplayBrightness;
+    uint8_t DisplayInverse;
 } SettingsRecord;
 
 SettingsRecord Settings;
@@ -112,4 +114,13 @@ uint8_t settings_getDisplayBrightness() {
 
 void settings_setDisplayBrightness(const uint8_t value) {
     Settings.DisplayBrightness = value;
+}
+
+
+bool settings_getDisplayInverse() {
+    return (Settings.DisplayInverse != 0);
+}
+
+void settings_setDisplayInverse(const bool value) {
+    Settings.DisplayInverse = value ? 1 : 0;
 }

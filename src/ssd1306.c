@@ -103,12 +103,12 @@ void ssd1306_displayOn() {
     ssd1306_writeRawCommand1(SSD1306_SET_DISPLAY_ON);
 }
 
-void ssd1306_displayInvert(bool invert) {
-    if (invert) {
-        ssd1306_writeRawCommand1(SSD1306_SET_INVERSE_DISPLAY);
-    } else {
-        ssd1306_writeRawCommand1(SSD1306_SET_NORMAL_DISPLAY);
-    }
+void ssd1306_displayInvert() {
+    ssd1306_writeRawCommand1(SSD1306_SET_INVERSE_DISPLAY);
+}
+
+void ssd1306_displayNormal() {
+    ssd1306_writeRawCommand1(SSD1306_SET_NORMAL_DISPLAY);
 }
 
 void ssd1306_setContrast(const uint8_t value) {

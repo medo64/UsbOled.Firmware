@@ -145,6 +145,11 @@ void initOled(void) {
 
     ssd1306_init(settings_getI2CAddress(), baudRateCounter, 128, settings_getDisplayHeight());
     ssd1306_setContrast(settings_getDisplayBrightness());
+    if (settings_getDisplayInverse()) {
+        ssd1306_displayInvert();
+    } else {
+        ssd1306_displayNormal();
+    }
     ssd1306_clearAll();
 
     ssd1306_writeText("    USB OLED    ", true);
@@ -242,6 +247,26 @@ bool processCommand(const uint8_t* data, const uint8_t count) {
             }
             break;
 
+        case '$':  // inverse
+            if (count == 1) {  // get if display is inverted by default
+                if (settings_getDisplayInverse()) {
+                    OutputBufferAppend('I');
+                } else {
+                    OutputBufferAppend('N');
+                }
+                return true;
+            } else if (count == 2) {  // set if display is inverted
+                switch(*++data) {
+                    case 'I': settings_setDisplayInverse(true); break;
+                    case 'N': settings_setDisplayInverse(false); break;
+                    default: return false;
+                }
+                settings_save();
+                initOled();
+                return true;
+            }
+            break;
+
         case '%':  // reset
             if (count == 1) {  // reboot
                 reset();
@@ -310,8 +335,10 @@ bool processCommand(const uint8_t* data, const uint8_t count) {
         case '~':  // defaults
             if (count == 1) {
                 settings_setI2CAddress(SETTING_DEFAULT_I2C_ADDRESS);
+                settings_setI2CSpeedIndex(SETTING_DEFAULT_I2C_SPEED_INDEX);
                 settings_setDisplayHeight(SETTING_DEFAULT_DISPLAY_HEIGHT);
                 settings_setDisplayBrightness(SETTING_DEFAULT_DISPLAY_BRIGHTNESS);
+                settings_setDisplayInverse(SETTING_DEFAULT_DISPLAY_INVERSE);
                 settings_save();
                 return true;
             }
@@ -332,14 +359,14 @@ bool processCommand(const uint8_t* data, const uint8_t count) {
 
         case 'i':
             if (count == 1) {
-                ssd1306_displayInvert(true);
+                ssd1306_displayInvert();
                 return true;
             }
             break;
 
         case 'I':
             if (count == 1) {
-                ssd1306_displayInvert(false);
+                ssd1306_displayNormal();
                 return true;
             }
             break;
