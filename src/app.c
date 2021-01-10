@@ -14,7 +14,7 @@ void initOled(void);
 uint8_t nibbleToHex(const uint8_t value);
 bool hexToNibble(const uint8_t hex, uint8_t* nibble);
 
-#define LED_TIMEOUT       2000
+#define LED_TIMEOUT       20
 #define LED_TIMEOUT_NONE  65535
 uint16_t LedTimeout = LED_TIMEOUT_NONE;
 
