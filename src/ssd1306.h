@@ -4,7 +4,7 @@
 #include <stdint.h>
 
 /** Initializes Display. */
-void ssd1306_init(const uint8_t address, const uint16_t speed, const uint8_t width, const uint8_t height);
+void ssd1306_init(const uint8_t address, const uint8_t baudRateCounter, const uint8_t width, const uint8_t height);
 
 
 /** Turns display off. */

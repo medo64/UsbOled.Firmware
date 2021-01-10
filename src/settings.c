@@ -6,10 +6,10 @@
 
 #define _SETTINGS_FLASH_RAW {                                                                \
                               SETTING_DEFAULT_I2C_ADDRESS,                                   \
-                              SETTING_DEFAULT_I2C_SPEED_LOW, SETTING_DEFAULT_I2C_SPEED_HIGH, \
+                              SETTING_DEFAULT_I2C_SPEED_INDEX,                               \
                               SETTING_DEFAULT_DISPLAY_HEIGHT,                                \
                               SETTING_DEFAULT_DISPLAY_BRIGHTNESS,                            \
-                              0, 0, 0,                                                       \
+                              0, 0, 0, 0,                                                    \
                               0, 0, 0, 0, 0, 0, 0, 0,                                        \
                               0, 0, 0, 0, 0, 0, 0, 0,                                        \
                               0, 0, 0, 0, 0, 0, 0, 0                                         \
@@ -19,7 +19,7 @@ const uint8_t _SETTINGS_PROGRAM[] __at(_SETTINGS_FLASH_LOCATION) = _SETTINGS_FLA
 
 typedef struct {
     uint8_t I2CAddress;
-    uint16_t I2CSpeed;
+    uint8_t I2CSpeedIndex;
     uint8_t DisplayHeight;
     uint8_t DisplayBrightness;
 } SettingsRecord;
@@ -82,14 +82,14 @@ void settings_setI2CAddress(const uint8_t value) {
 }
 
 
-uint16_t settings_getI2CSpeed() {
-    uint16_t value = Settings.I2CSpeed;
-    if (value == 0) { value = (SETTING_DEFAULT_I2C_SPEED_HIGH << 8) | SETTING_DEFAULT_I2C_SPEED_LOW; }
+uint8_t settings_getI2CSpeedIndex() {
+    uint8_t value = Settings.I2CSpeedIndex;
+    if ((value == 0) || (value > 10)) { value = SETTING_DEFAULT_I2C_SPEED_INDEX; }
     return value;
 }
 
-void settings_setI2CSpeed(const uint16_t value) {
-    Settings.I2CSpeed = value;
+void settings_setI2CSpeedIndex(const uint8_t value) {
+    Settings.I2CSpeedIndex = value;
 }
 
 

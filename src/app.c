@@ -129,7 +129,21 @@ void __interrupt() SYS_InterruptHigh(void) {
 
 
 void initOled(void) {
-    ssd1306_init(settings_getI2CAddress(), settings_getI2CSpeed(), 128, settings_getDisplayHeight());
+    uint8_t baudRateCounter;
+    switch (settings_getI2CSpeedIndex()) {
+        case 2: baudRateCounter = 59; break;    // 200 kHz @ 48 MHz
+        case 3: baudRateCounter = 39; break;    // 300 kHz @ 48 MHz
+        case 4: baudRateCounter = 29; break;    // 400 kHz @ 48 MHz
+        case 5: baudRateCounter = 23; break;    // 500 kHz @ 48 MHz
+        case 6: baudRateCounter = 19; break;    // 600 kHz @ 48 MHz
+        case 7: baudRateCounter = 16; break;    // 700 kHz @ 48 MHz (~705 kHz)
+        case 8: baudRateCounter = 14; break;    // 800 kHz @ 48 MHz
+        case 9: baudRateCounter = 12; break;    // 900 kHz @ 48 MHz (~923 kHz)
+        case 10: baudRateCounter = 11; break;   // 1000 kHz @ 48 MHz
+        default: baudRateCounter = 119; break;  // 100 kHz @ 48 MHz
+    }
+
+    ssd1306_init(settings_getI2CAddress(), baudRateCounter, 128, settings_getDisplayHeight());
     ssd1306_setContrast(settings_getDisplayBrightness());
     ssd1306_clearAll();
 
@@ -270,20 +284,23 @@ bool processCommand(const uint8_t* data, const uint8_t count) {
             break;
 
         case '^':  // I2C speed
-            if (count == 1) {  // get I2C speed
-                uint16_t speed = settings_getI2CSpeed();
-                OutputBufferAppend(nibbleToHex(speed >> 12));  // upper high nibble
-                OutputBufferAppend(nibbleToHex(speed >> 8));   // upper low nibble
-                OutputBufferAppend(nibbleToHex(speed >> 4));   // lower high nibble
-                OutputBufferAppend(nibbleToHex(speed));        // lower low nibble
+            if (count == 1) {  // get I2C speed index
+                uint8_t speedIndex = settings_getI2CSpeedIndex();
+                if (speedIndex == 10) {
+                    OutputBufferAppend('0');
+                } else {
+                    OutputBufferAppend('0' + speedIndex);
+                }
                 return true;
-            } else if (count == 5) {  // set I2C speed
-                uint16_t_VAL speed;
-                if (!hexToNibble(*++data, &speed.byte.HB)) { return false; }
-                if (!hexToNibble(*++data, &speed.byte.HB)) { return false; }
-                if (!hexToNibble(*++data, &speed.byte.LB)) { return false; }
-                if (!hexToNibble(*++data, &speed.byte.LB)) { return false; }
-                settings_setI2CSpeed(speed.Val);
+            } else if (count == 2) {  // set I2C speed index
+                uint8_t speedIndex = *++data;
+                if (speedIndex == '0') {
+                    settings_setI2CSpeedIndex(10);
+                } else if ((speedIndex > '0') && (speedIndex <= '9')) {
+                    settings_setI2CSpeedIndex(speedIndex - '0');
+                } else {
+                    return false;
+                }
                 settings_save();
                 initOled();
                 return true;

@@ -197,15 +197,16 @@ without argument, the current value will be returned.
 
 #### `^` (set speed) ####
 
-This command will set OLED module I²C speed in kHz. Argument is address in
-hexadecimal format. Changes to setting are saved immediately. If called
-without argument, the current value will be returned.
+This command will set OLED module I²C speed. Argument is speed in 100
+kHz steps (with `0` being `1 Mbps`). Changes to setting are saved
+immediately. If called without argument, the current value will be
+returned.
 
 ##### Example 1 (100 kHz) #####
 
 |           |                                                                |
 |-----------|----------------------------------------------------------------|
-| Request:  | `HT` `^0064` `LF`                                              |
+| Request:  | `HT` `^1` `LF`                                                 |
 | Response: | `LF`                                                           |
 | Result:   | Speed is set to 100 kHz.                                       |
 
@@ -213,16 +214,24 @@ without argument, the current value will be returned.
 
 |           |                                                                |
 |-----------|----------------------------------------------------------------|
-| Request:  | `HT` `@0190` `LF`                                              |
+| Request:  | `HT` `^4` `LF`                                                 |
 | Response: | `LF`                                                           |
-| Result:   | Speed is set to 100 kHz.                                       |
+| Result:   | Speed is set to 400 kHz.                                       |
 
-##### Example 3 (current value) #####
+##### Example 3 (1 Mbps) #####
+
+|           |                                                                |
+|-----------|----------------------------------------------------------------|
+| Request:  | `HT` `^0` `LF`                                                 |
+| Response: | `LF`                                                           |
+| Result:   | Speed is set to 1000 kHz.                                      |
+
+##### Example 4 (current value) #####
 
 |           |                                                                |
 |-----------|----------------------------------------------------------------|
 | Request:  | `HT` `^` `LF`                                                  |
-| Response: | `0064` `LF`                                                    |
+| Response: | `1` `LF`                                                       |
 | Result:   | Speed is 100 kHz.                                              |
 
 

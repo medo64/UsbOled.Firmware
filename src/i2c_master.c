@@ -1,9 +1,7 @@
 #include <xc.h>
 #include <stdbool.h>
 #include <stdint.h>
-#include "Microchip/usb_device.h"
 #include "i2c_master.h"
-#include "system.h"
 
 #define READ  1
 #define WRITE 0
@@ -15,16 +13,13 @@ void waitIdle() {
     while ((SSPCON2 & 0x1F) | SSPSTATbits.R_nW);  // wait until idle    
 }
 
-void i2c_master_init(const uint16_t speedKHz) {
-    uint16_t freqKHz = (_XTAL_FREQ / 1000);
-    uint16_t baudRate = freqKHz / speedKHz / 4 - 1;
-
+void i2c_master_init(const uint8_t baudRateCounter) {
     SSPCON1 = 0;  SSPCON2 = 0;  SSPSTAT = 0;  // reset all
 
     SSPCON1bits.SSPM = 0b1000;                // I2C master mode
     SSPCON1bits.SSPEN = 1;                    // enable I2C master mode
     SSP1STATbits.CKE = 1;                     // slew control enabled, low voltage input (SMBus) enables
-    SSP1ADD = (uint8_t)baudRate;              // setup speed
+    SSP1ADD = baudRateCounter;                // setup speed
 
     TRISC0 = 1;                               // clock pin configured as input
     TRISC1 = 1;                               // data pin configured as input}
