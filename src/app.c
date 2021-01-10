@@ -26,7 +26,6 @@ void main(void) {
 
     settings_init();
     initOled();
-    ssd1306_setContrast(settings_getDisplayBrightness());
 
     led_activity_off();
 
@@ -131,6 +130,7 @@ void __interrupt() SYS_InterruptHigh(void) {
 
 void initOled(void) {
     ssd1306_init(settings_getI2CAddress(), settings_getI2CSpeed(), 128, settings_getDisplayHeight());
+    ssd1306_setContrast(settings_getDisplayBrightness());
     ssd1306_clearAll();
 
     ssd1306_writeText("    USB OLED    ", true);
