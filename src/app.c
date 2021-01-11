@@ -332,6 +332,18 @@ bool processCommand(const uint8_t* data, const uint8_t count) {
             }
             break;
 
+        case '`':  // set serial number for USB
+            if (count == 9) {
+                uint8_t* serial = &Settings.UsbSerialValue[8];
+                for (uint8_t i = 0; i < 8; i++) {
+                    *serial = *++data;
+                    serial += 2;
+                }
+                settings_save();
+                reset();
+            }
+            break;
+
         case '~':  // defaults
             if (count == 1) {
                 settings_setI2CAddress(SETTING_DEFAULT_I2C_ADDRESS);

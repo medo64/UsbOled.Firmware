@@ -114,7 +114,7 @@ please contact mla_licensing@microchip.com
 
 #define USB_SUPPORT_DEVICE
 
-#define USB_NUM_STRING_DESCRIPTORS 4
+#define USB_NUM_STRING_DESCRIPTORS 3 + 1  // serial number is 4th
 
 /*******************************************************************
  * Event disable options

@@ -142,6 +142,7 @@ state according to the definition in the USB specification.
 /** INCLUDES *******************************************************/
 #include "usb.h"
 #include "usb_device_cdc.h"
+#include "../settings.h"  // to allow for programmable serial
 
 /** CONSTANTS ******************************************************/
 #if defined(__18CXX)
@@ -271,13 +272,6 @@ sizeof(sd002),USB_DESCRIPTOR_STRING,
 'U','S','B',' ','O','L','E','D'}
 };
 
-//Serial string descriptor
-const struct{uint8_t bLength;uint8_t bDscType;uint16_t string[12];}sd003 __at(0x1F00)={
-sizeof(sd003),USB_DESCRIPTOR_STRING,
-{'E','A','9','E',
-'1','9','7','9','0','1','2','8'}
-};
-
 //Array of configuration descriptors
 const uint8_t *const USB_CD_Ptr[]=
 {
@@ -289,7 +283,7 @@ const uint8_t *const USB_SD_Ptr[USB_NUM_STRING_DESCRIPTORS]=
     (const uint8_t *const)&sd000,
     (const uint8_t *const)&sd001,
     (const uint8_t *const)&sd002,
-    (const uint8_t *const)&sd003,
+    (const uint8_t *const)&Settings.UsbSerialLength,  // serial is in settings.h
 };
 
 #if defined(__18CXX)

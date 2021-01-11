@@ -4,29 +4,6 @@
 #include "settings.h"
 #include "Microchip/usb_device.h"
 
-#define _SETTINGS_FLASH_RAW {                                                                \
-                              SETTING_DEFAULT_I2C_ADDRESS,                                   \
-                              SETTING_DEFAULT_I2C_SPEED_INDEX,                               \
-                              SETTING_DEFAULT_DISPLAY_HEIGHT,                                \
-                              SETTING_DEFAULT_DISPLAY_BRIGHTNESS,                            \
-                              SETTING_DEFAULT_DISPLAY_INVERSE,                               \
-                              0, 0, 0,                                                       \
-                              0, 0, 0, 0, 0, 0, 0, 0,                                        \
-                              0, 0, 0, 0, 0, 0, 0, 0,                                        \
-                              0, 0, 0, 0, 0, 0, 0, 0                                         \
-                            }  // reserving space because erase block is block 32-word (32-bytes as only low bytes are used)
-#define _SETTINGS_FLASH_LOCATION 0x1FE0
-const uint8_t _SETTINGS_PROGRAM[] __at(_SETTINGS_FLASH_LOCATION) = _SETTINGS_FLASH_RAW;
-
-typedef struct {
-    uint8_t I2CAddress;
-    uint8_t I2CSpeedIndex;
-    uint8_t DisplayHeight;
-    uint8_t DisplayBrightness;
-    uint8_t DisplayInverse;
-} SettingsRecord;
-
-SettingsRecord Settings;
 
 void settings_init() {
     uint8_t* settingsPtr = (uint8_t*)&Settings;

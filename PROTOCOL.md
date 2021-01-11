@@ -391,3 +391,17 @@ expressed in 8x8 units (even when 8x16 font is used).
 | Request:  | `m09` `LF`                                                     |
 | Response: | `!` `LF`                                                       |
 | Result:   | No action is taken since row is outside of range.              |
+
+
+#### `\`` (set serial)  ####
+
+Using grave (`), one sets the last portion of USB serial number and
+reboots device afterward. The first portion of serial number is always
+`EA9A`.
+
+##### Example #####
+
+|           |                                                                |
+|-----------|----------------------------------------------------------------|
+| Request:  | `\`12345678` `LF`                                              |
+| Result:   | Sets serial number to EA9A12345678.                            |
