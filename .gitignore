@@ -13,6 +13,10 @@ Firmware/src/nbproject/Makefile-*.mk
 Firmware/src/nbproject/Package-*.bash
 Firmware/tmp/
 
-Hardware/dist/
-Hardware/research/
-Hardware/tmp/
+Hardware/datasheets
+Hardware/dist
+Hardware/src/*-backups
+Hardware/src/fp-info-cache
+Hardware/src/*.kicad_prl
+Hardware/src/*.kicad_*.lck
+Hardware/research
