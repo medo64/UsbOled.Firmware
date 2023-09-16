@@ -1,6 +1,6 @@
 #include <xc.h>
 
 void led_init() {
-    LATA4 = 1;  // start with Active off
-    TRISA4 = 0; // enable Active
+    LATA4 = 0;  // active is always off (open-drain))
+    TRISA4 = 1; // keep it on by default
 }
