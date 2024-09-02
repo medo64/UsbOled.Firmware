@@ -1,5 +1,4 @@
-#ifndef FONT_H
-#define FONT_H
+#pragma once
 
 #include <stdint.h>
 
@@ -2452,5 +2451,3 @@ const uint8_t font_8x16[] = {
     0x00, // ░░░░░░░░
     0x00, // ░░░░░░░░
 };
-
-#endif

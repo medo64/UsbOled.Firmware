@@ -1,5 +1,4 @@
-#ifndef SETTINGS_H
-#define	SETTINGS_H
+#pragma once
 
 #define SETTING_DEFAULT_I2C_ADDRESS         0x3C
 #define SETTING_DEFAULT_I2C_SPEED_INDEX     1
@@ -77,5 +76,3 @@ bool settings_getDisplayInverse();
 
 /** Sets if OLED's display is inverted. */
 void settings_setDisplayInverse(const bool value);
-
-#endif	/* SETTINGS_H */

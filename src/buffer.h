@@ -1,5 +1,4 @@
-#ifndef BUFFER_H
-#define	BUFFER_H
+#pragma once
 
 #include "Microchip/usb_config.h"
 

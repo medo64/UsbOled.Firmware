@@ -1,5 +1,4 @@
-#ifndef I2C_MASTER_H
-#define	I2C_MASTER_H
+#pragma once
 
 #include <stdbool.h>
 #include <stdint.h>
@@ -34,5 +33,3 @@ void i2c_master_stop();
 
 /** Sends a restart command. */
 void i2c_master_restart();
-
-#endif

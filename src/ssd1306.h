@@ -1,5 +1,4 @@
-#ifndef SSD1306_H
-#define	SSD1306_H
+#pragma once
 
 #include <stdint.h>
 
@@ -48,5 +47,3 @@ bool ssd1306_writeCharacter(const uint8_t value, const bool isLarge);
 
 /** Writes 8x8 text at the current position */
 bool ssd1306_writeText(const uint8_t* text, const bool isLarge);
-
-#endif

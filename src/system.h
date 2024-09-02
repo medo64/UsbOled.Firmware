@@ -1,6 +1,4 @@
-#ifndef SYSTEM_H
-#define SYSTEM_H
-
+#pragma once
 
 // CONFIG1
 #pragma config FOSC     = INTOSC    // INTOSC oscillator: I/O function on CLKIN pin
@@ -36,5 +34,3 @@
 
 
 void init(void);
-
-#endif
