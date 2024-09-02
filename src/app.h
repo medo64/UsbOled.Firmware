@@ -2,8 +2,8 @@
 
 #define _XTAL_FREQ     48000000
 
-#define VERSION_MINOR  0
 #define VERSION_MAJOR  1
+#define VERSION_MINOR  1
 
 // SSD1306
 #define _SSD1306_EXTERNAL_I2C_MASTER

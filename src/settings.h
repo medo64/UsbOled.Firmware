@@ -5,6 +5,7 @@
 #define SETTING_DEFAULT_DISPLAY_HEIGHT      64
 #define SETTING_DEFAULT_DISPLAY_BRIGHTNESS  0xCF
 #define SETTING_DEFAULT_DISPLAY_INVERSE     0
+#define SETTING_DEFAULT_DISPLAY_FLIP        0
 
 #define _SETTINGS_FLASH_RAW {                                                                \
                               SETTING_DEFAULT_I2C_ADDRESS,                                   \
@@ -12,7 +13,7 @@
                               SETTING_DEFAULT_DISPLAY_HEIGHT,                                \
                               SETTING_DEFAULT_DISPLAY_BRIGHTNESS,                            \
                               SETTING_DEFAULT_DISPLAY_INVERSE,                               \
-                              0,                                                             \
+                              SETTING_DEFAULT_DISPLAY_FLIP,                                  \
                               26, 0x03,                                                      \
                               'E', 0, 'A', 0, '9', 0, 'E', 0,                                \
                               '1', 0, '9', 0, '7', 0, '9', 0,                                \
@@ -27,7 +28,7 @@ typedef struct {
     uint8_t DisplayHeight;
     uint8_t DisplayBrightness;
     uint8_t DisplayInverse;
-    uint8_t Reserved;
+    uint8_t DisplayFlip;
     uint8_t UsbSerialLength;
     uint8_t UsbSerialType;
     uint8_t UsbSerialValue[24];
@@ -76,3 +77,10 @@ bool settings_getDisplayInverse(void);
 
 /** Sets if OLED's display is inverted. */
 void settings_setDisplayInverse(const bool value);
+
+
+/** Gets if OLED's display is flipped. */
+bool settings_getDisplayFlip(void);
+
+/** Sets if OLED's display is flipped. */
+void settings_setDisplayFlip(const bool value);

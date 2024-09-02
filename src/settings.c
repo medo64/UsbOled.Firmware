@@ -101,3 +101,12 @@ bool settings_getDisplayInverse(void) {
 void settings_setDisplayInverse(const bool value) {
     Settings.DisplayInverse = value ? 1 : 0;
 }
+
+
+bool settings_getDisplayFlip(void) {
+    return (Settings.DisplayFlip != 0);
+}
+
+void settings_setDisplayFlip(const bool value) {
+    Settings.DisplayFlip = value ? 1 : 0;
+}

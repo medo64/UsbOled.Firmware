@@ -128,8 +128,6 @@ argument, the current value will be returned.
 | Result:   | No change to display size.                                     |
 
 
-
-
 #### `$` (invert) ####
 
 This command will set whether display will be inverted by default.
@@ -157,6 +155,35 @@ This command will set whether display will be inverted by default.
 | Request:  | `HT` `$` `LF`                                                  |
 | Response: | `N` `LF`                                                       |
 | Result:   | Display is not inverted by default.                            |
+
+
+#### `=` (flip) ####
+
+This command will set whether display will be flipped by default.
+
+##### Example 1 (Normal) #####
+
+|           |                                                                |
+|-----------|----------------------------------------------------------------|
+| Request:  | `HT` `=N` `LF`                                                 |
+| Response: | `LF`                                                           |
+| Result:   | Display is not flipped by default.                             |
+
+##### Example 2 (flipped) #####
+
+|           |                                                                |
+|-----------|----------------------------------------------------------------|
+| Request:  | `HT` `=F` `LF`                                                 |
+| Response: | `LF`                                                           |
+| Result:   | Display is flipped by default.                                 |
+
+##### Example 3 (current value) #####
+
+|           |                                                                |
+|-----------|----------------------------------------------------------------|
+| Request:  | `HT` `=` `LF`                                                  |
+| Response: | `N` `LF`                                                       |
+| Result:   | Display is not flipped by default.                             |
 
 
 #### `%` (reset) ####

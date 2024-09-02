@@ -150,6 +150,7 @@ void initOled(void) {
     } else {
         ssd1306_displayNormal();
     }
+    ssd1306_displayFlip(settings_getDisplayFlip());
     ssd1306_clearAll();
 
     ssd1306_writeText16("    USB OLED    ");
@@ -266,6 +267,26 @@ bool processCommand(const uint8_t* data, const uint8_t count) {
                 switch(*++data) {
                     case 'I': settings_setDisplayInverse(true); break;
                     case 'N': settings_setDisplayInverse(false); break;
+                    default: return false;
+                }
+                settings_save();
+                initOled();
+                return true;
+            }
+            break;
+
+        case '=':  // flip
+            if (count == 1) {  // get if display is flipped by default
+                if (settings_getDisplayFlip()) {
+                    OutputBufferAppend('F');
+                } else {
+                    OutputBufferAppend('N');
+                }
+                return true;
+            } else if (count == 2) {  // set if display is flipped
+                switch(*++data) {
+                    case 'F': settings_setDisplayFlip(true); break;
+                    case 'N': settings_setDisplayFlip(false); break;
                     default: return false;
                 }
                 settings_save();
