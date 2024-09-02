@@ -4,6 +4,7 @@ research/
 src/*.err
 src/*.obj
 src/build/
+src/debug/
 src/disassembly/
 src/dist/
 src/funclist
