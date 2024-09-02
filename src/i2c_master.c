@@ -27,7 +27,7 @@ void i2c_master_init(const uint8_t baudRateCounter) {
 
 bool i2c_master_startRead(const uint8_t address) {
     i2c_master_start();                                  // Start
-    return i2c_master_writeByte((address << 1) | READ);  // load address
+    return i2c_master_writeByte((uint8_t)(address << 1) | READ);  // load address
 }
 
 bool i2c_master_readByte(uint8_t* value) {
@@ -67,7 +67,7 @@ bool i2c_slave_readBytes(uint8_t* value, const uint8_t count) {
 bool i2c_master_startWrite(const uint8_t address) {
     waitIdle();
     i2c_master_start();                                   // start operation
-    return i2c_master_writeByte((address << 1) | WRITE);  // load address
+    return i2c_master_writeByte((uint8_t)(address << 1) | WRITE);  // load address
 }
 
 bool i2c_master_writeByte(const uint8_t value) {
@@ -79,17 +79,17 @@ bool i2c_master_writeByte(const uint8_t value) {
 }
 
 
-void i2c_master_start() {
+void i2c_master_start(void) {
     SSPCON2bits.SEN = 1;      // initiate Start condition
     while (SSPCON2bits.SEN);  // wait until done
 }
 
-void i2c_master_stop() {
+void i2c_master_stop(void) {
     SSPCON2bits.PEN = 1;      // initiate Stop condition
     while (SSPCON2bits.PEN);  // wait until done
 }
 
-void i2c_master_restart() {
+void i2c_master_restart(void) {
     SSPCON2bits.RSEN = 1;      // initiate Repeated Start condition
     while (SSPCON2bits.RSEN);  // wait until done
 }

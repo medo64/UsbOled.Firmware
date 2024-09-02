@@ -1781,7 +1781,7 @@ static void USBCtrlTrfTxService(void)
     byteToSend = USB_EP0_BUFF_SIZE;
     if(inPipes[0].wCount.Val < (uint8_t)USB_EP0_BUFF_SIZE)
     {
-        byteToSend = inPipes[0].wCount.Val;
+        byteToSend = (uint8_t)inPipes[0].wCount.Val;
 
         //Keep track of whether or not we have sent a "short packet" yet.
         //This is useful so that later on, we can configure EP0 IN to STALL,
@@ -1868,7 +1868,7 @@ static void USBCtrlTrfRxService(void)
     //application firmware was expecting to receive.
     if(byteToRead > outPipes[0].wCount.Val)
     {
-        byteToRead = outPipes[0].wCount.Val;
+        byteToRead = (uint8_t)outPipes[0].wCount.Val;
     }
     //Reduce the number of remaining bytes by the number we just received.
     outPipes[0].wCount.Val -= byteToRead;
@@ -1922,6 +1922,7 @@ static void USBCtrlTrfRxService(void)
                 //message when building with the XC8 compiler
                 #pragma warning push
                 #pragma warning disable 1088
+                #pragma warning disable 2098  // indirect function call via a NULL pointer ignored
                 outPipes[0].pFunc();    //Call the user's callback function
                 #pragma warning pop
             #else
@@ -2661,7 +2662,10 @@ static void USBCtrlTrfInHandler(void)
         {
             if(outPipes[0].pFunc != NULL)
             {
+                #pragma warning push
+                #pragma warning disable 2098  // indirect function call via a NULL pointer ignored
                 outPipes[0].pFunc();
+                #pragma warning pop
             }
             outPipes[0].info.bits.busy = 0;
         }

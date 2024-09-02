@@ -26,10 +26,10 @@ bool i2c_master_writeByte(const uint8_t value);
 
 
 /** Sends a start command. */
-void i2c_master_start();
+void i2c_master_start(void);
 
 /** Sends a stop command. */
-void i2c_master_stop();
+void i2c_master_stop(void);
 
 /** Sends a restart command. */
-void i2c_master_restart();
+void i2c_master_restart(void);

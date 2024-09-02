@@ -37,42 +37,42 @@ SettingsRecord Settings;
 
 
 /** Initializes settings. */
-void settings_init();
+void settings_init(void);
 
 /** Saves settings to EEPROM. */
-void settings_save();
+void settings_save(void);
 
 
 /** Gets OLED's I2C address. */
-uint8_t settings_getI2CAddress();
+uint8_t settings_getI2CAddress(void);
 
 /** Sets OLED's I2C address. */
 void settings_setI2CAddress(const uint8_t value);
 
 
 /** Gets OLED's I2C speed (in 100kHz). */
-uint8_t settings_getI2CSpeedIndex();
+uint8_t settings_getI2CSpeedIndex(void);
 
 /** Sets OLED's I2C speed (in 100kHz). */
 void settings_setI2CSpeedIndex(const uint8_t value);
 
 
 /** Gets screen height. Only 64 (A-type) and 32 (B-type) are supported. */
-uint8_t settings_getDisplayHeight();
+uint8_t settings_getDisplayHeight(void);
 
 /** Sets screen height. */
 void settings_setDisplayHeight(const uint8_t value);
 
 
 /** Gets OLED's brightness. */
-uint8_t settings_getDisplayBrightness();
+uint8_t settings_getDisplayBrightness(void);
 
 /** Sets OLED's brightness. */
 void settings_setDisplayBrightness(const uint8_t value);
 
 
 /** Gets if OLED's display is inverted. */
-bool settings_getDisplayInverse();
+bool settings_getDisplayInverse(void);
 
 /** Sets if OLED's display is inverted. */
 void settings_setDisplayInverse(const bool value);
