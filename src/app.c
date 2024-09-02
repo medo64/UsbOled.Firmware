@@ -152,10 +152,9 @@ void initOled(void) {
     }
     ssd1306_clearAll();
 
-    ssd1306_writeText("    USB OLED    ", true);
-    ssd1306_moveToNextRow();
-    ssd1306_moveToNextRow();
-    ssd1306_writeText("   medo64.com   ", false);
+    ssd1306_writeText16("    USB OLED    ");
+    ssd1306_moveToNextRow16();
+    ssd1306_writeText("   medo64.com   ");
     ssd1306_moveToNextRow();
 }
 
@@ -207,12 +206,20 @@ bool processInput(const uint8_t* dataIn, const uint8_t count, bool* out_LastUseL
                 break;
 
             case 0x0C:  // FF: clear remaining
-                ssd1306_clearRemaining(useLarge);
+                if (useLarge) {
+                    ssd1306_clearRemaining16();
+                } else {
+                    ssd1306_clearRemaining();
+                }
                 break;
 
             default:
                 if ((*data >= 32) && (*data <= 126)) {  // ignore ASCII control characters
-                    wasOk &= ssd1306_writeCharacter(*data, useLarge);
+                    if (useLarge) {
+                        wasOk &= ssd1306_writeCharacter16(*data);
+                    } else {
+                        wasOk &= ssd1306_writeCharacter(*data);
+                    }
                 }
                 break;
         }

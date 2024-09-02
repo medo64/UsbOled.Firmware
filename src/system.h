@@ -1,7 +1,15 @@
 #pragma once
 
-#define VERSION_MAJOR 1
-#define VERSION_MINOR 0
+#include "app.h"
+
+#define interruptsEnable()   GIE = 1
+#define interruptsDisable()  GIE = 0
+
+#define reset()  asm("RESET");
+#define wait_short()  __delay_ms(150);
+
+void init(void);
+
 
 // CONFIG1
 #pragma config FOSC     = INTOSC    // INTOSC oscillator: I/O function on CLKIN pin
@@ -24,16 +32,3 @@
 #pragma config BORV     = LO        // Brown-out Reset Voltage (Vbor), low trip point selected.
 #pragma config LPBOR    = OFF       // Low-Power BOR is disabled
 #pragma config LVP      = OFF       // High-voltage on MCLR/VPP must be used for programming
-
-
-#define _XTAL_FREQ 48000000
-
-
-#define interruptsEnable()   GIE = 1
-#define interruptsDisable()  GIE = 0
-
-#define reset()  asm("RESET");
-#define wait_short()  __delay_ms(150);
-
-
-void init(void);

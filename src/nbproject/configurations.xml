@@ -23,6 +23,8 @@
       <itemPath>system.h</itemPath>
       <itemPath>buffer.h</itemPath>
       <itemPath>settings.h</itemPath>
+      <itemPath>app.h</itemPath>
+      <itemPath>ssd1306_font.h</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
