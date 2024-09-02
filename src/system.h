@@ -1,5 +1,8 @@
 #pragma once
 
+#define VERSION_MAJOR 1
+#define VERSION_MINOR 0
+
 // CONFIG1
 #pragma config FOSC     = INTOSC    // INTOSC oscillator: I/O function on CLKIN pin
 #pragma config WDTE     = OFF       // WDT disabled

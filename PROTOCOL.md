@@ -393,6 +393,27 @@ expressed in 8x8 units (even when 8x16 font is used).
 | Result:   | No action is taken since row is outside of range.              |
 
 
+#### `V` (Version)  ####
+
+Returns version.
+
+##### Example #####
+
+|           |                                                                |
+|-----------|----------------------------------------------------------------|
+| Request:  | `V` `LF`                                                       |
+| Response: | `<major>.<minor>LF`                                            |
+| Result:   | Moves cursor to row 2 and column 6.                            |
+
+##### Example (invalid) #####
+
+|           |                                                                |
+|-----------|----------------------------------------------------------------|
+| Request:  | `V09` `LF`                                                     |
+| Response: | `!` `LF`                                                       |
+| Result:   | No action is taken since row is outside of range.              |
+
+
 #### `\`` (set serial)  ####
 
 Using grave (`), one sets the last portion of USB serial number and

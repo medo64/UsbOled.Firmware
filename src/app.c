@@ -398,6 +398,16 @@ bool processCommand(const uint8_t* data, const uint8_t count) {
                 return ssd1306_moveTo(row, column);
             }
             break;
+
+        case 'V':  // Version
+            if (count == 1) {  // get version
+                OutputBufferAppend(0x30 + VERSION_MAJOR);
+                OutputBufferAppend('.');
+                OutputBufferAppend(0x30 + VERSION_MINOR);
+                return true;
+            }
+            break;
+
     }
 
     return false;
