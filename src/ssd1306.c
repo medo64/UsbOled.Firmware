@@ -5,9 +5,7 @@
 #include "app.h"
 #include "ssd1306.h"
 #include "ssd1306_font.h"
-#if defined(_SSD1306_EXTERNAL_I2C_MASTER)
-    #include "i2c_master.h"
-#endif
+#include "i2c_master.h"
 
 #define SSD1306_SET_LOWER_START_COLUMN_ADDRESS       0x00
 #define SSD1306_SET_UPPER_START_COLUMN_ADDRESS       0x10
@@ -35,21 +33,10 @@
 #define SSD1306_SET_COM_PINS_HARDWARE_CONFIGURATION  0xDA
 #define SSD1306_SET_VCOMH_DESELECT_LEVEL             0xDB
 
-void writeRawCommand1(const uint8_t value);
-void writeRawCommand2(const uint8_t value1, const uint8_t value2);
-void witeRawCommand3(const uint8_t value1, const uint8_t value2, const uint8_t value3);
-void writeRawData(const uint8_t* value, const uint8_t count);
+void writeRawCommand1(const uint8_t datum1);
+void writeRawCommand2(const uint8_t datum1, const uint8_t datum2);
+void writeRawData(const uint8_t* data, const uint8_t count);
 void writeRawDataZeros(const uint8_t count);
-
-#if !defined(_SSD1306_EXTERNAL_I2C_MASTER)
-    void i2c_master_start(void);
-    void i2c_master_stop(void);
-    void waitIdle(void);
-    void resetBus(void);
-    void i2c_master_init(void);
-    bool i2c_master_writeByte(const uint8_t value);
-    bool i2c_master_startWrite(const uint8_t address);
-#endif
 
 
 #if defined(_SSD1306_CUSTOM_INIT)
@@ -69,33 +56,7 @@ void writeRawDataZeros(const uint8_t count);
 uint8_t currentRow;
 uint8_t currentColumn;
 
-#if defined(_SSD1306_CUSTOM_INIT)
-void ssd1306_init(const uint8_t address, const uint8_t baudRateCounter, const uint8_t width, const uint8_t height) {
-    displayAddress = address;
-    displayWidth = width;
-    displayHeight = height;
-    displayColumns = width / 8;
-    displayRows = height / 8;
-
-    // setup I2C bus pings
-    LATC0 = 0;                                // set clock low
-    LATC1 = 0;                                // set data low
-    TRISC0 = 1;                               // clock pin configured as output
-    TRISC1 = 1;                               // data pin configured as input
-    for (unsigned char j=0; j<3; j++) {       // repeat 3 times with alternating data
-        for (unsigned char i=0; i<10; i++) {  // 9 cycles + 1 extra
-            TRISC0 = 0; __delay_us(50);       // force clock low
-            TRISC0 = 1; __delay_us(50);       // release clock high
-        }
-        TRISC1 = !TRISC1;                     // toggle data line
-    }
-
-    #if defined(_SSD1306_EXTERNAL_I2C_MASTER)
-        i2c_master_init(baudRateCounter);
-    #else
-        i2c_master_init();
-    #endif
-
+void ssd1306_internalInit() {
     writeRawCommand1(SSD1306_SET_DISPLAY_OFF);                                    // Set Display Off
     writeRawCommand2(SSD1306_SET_DISPLAY_CLOCK_DIVIDE_RATIO, 0x80);               // Set Display Clock Divide Ratio/Oscillator Frequency
     writeRawCommand2(SSD1306_SET_MULTIPLEX_RATIO, displayHeight - 1);             // Set Multiplex Ratio (line count - 1)
@@ -109,7 +70,7 @@ void ssd1306_init(const uint8_t address, const uint8_t baudRateCounter, const ui
         writeRawCommand1(SSD1306_SET_SEGMENT_REMAP_COL0);                         // Set Segment Re-Map
         writeRawCommand1(SSD1306_SET_COM_OUTPUT_SCAN_DIRECTION_INC);              // Set COM Output Scan Direction
     #endif
-    if (height == 32) {
+    if (displayHeight == 32) {
         writeRawCommand2(SSD1306_SET_COM_PINS_HARDWARE_CONFIGURATION, 0x02);      // Set COM Pins Hardware Configuration (0x02 128x32)
         writeRawCommand2(SSD1306_SET_CONTRAST_CONTROL, 0x8F);                     // Set Contrast Control (0x8F 128x32; external vcc; internal vcc)
     } else {
@@ -127,11 +88,19 @@ void ssd1306_init(const uint8_t address, const uint8_t baudRateCounter, const ui
 
     writeRawCommand1(SSD1306_SET_DISPLAY_ON);                                     // Set Display On
 }
+
+#if defined(_SSD1306_CUSTOM_INIT)
+    void ssd1306_init(const uint8_t address, const uint8_t width, const uint8_t height) {
+        displayAddress = address;
+        displayWidth = width;
+        displayHeight = height;
+        displayColumns = width / 8;
+        displayRows = height / 8;
+        ssd1306_internalInit();
+    }
 #else
     void ssd1306_init(void) {
-        #if !defined(_SSD1306_EXTERNAL_I2C_MASTER)
-            i2c_master_init();
-        #endif
+        ssd1306_internalInit();
     }
 #endif
 
@@ -379,118 +348,19 @@ bool ssd1306_writeCharacter16(const char value) {
 
 
 
-void writeRawCommand1(const uint8_t value1) {
-   i2c_master_startWrite(displayAddress);
-   i2c_master_writeByte(0x00);
-   i2c_master_writeByte(value1);
-   i2c_master_stop();
+void writeRawCommand1(const uint8_t datum1) {
+    i2c_master_writeRegisterBytes(displayAddress, 0x00, &datum1, 1);
 }
 
-void writeRawCommand2(const uint8_t value1, const uint8_t value2) {
-   i2c_master_startWrite(displayAddress);
-   i2c_master_writeByte(0x00);
-   i2c_master_writeByte(value1);
-   i2c_master_writeByte(value2);
-   i2c_master_stop();
+void writeRawCommand2(const uint8_t datum1, const uint8_t datum2) {
+    uint8_t data[2] = { datum1, datum2 };
+    i2c_master_writeRegisterBytes(displayAddress, 0x00, data, 2);
 }
 
-void writeRawCommand3(const uint8_t value1, const uint8_t value2, const uint8_t value3) {
-   i2c_master_startWrite(displayAddress);
-   i2c_master_writeByte(0x00);
-   i2c_master_writeByte(value1);
-   i2c_master_writeByte(value2);
-   i2c_master_writeByte(value3);
-   i2c_master_stop();
-}
-
-void writeRawData(const uint8_t *value, const uint8_t count) {
-   i2c_master_startWrite(displayAddress);
-   i2c_master_writeByte(0x40);
-   for (uint8_t i = 0; i < count; i++) {
-       i2c_master_writeByte(*value);
-       value++;
-   }
-   i2c_master_stop();
+void writeRawData(const uint8_t *data, const uint8_t count) {
+    i2c_master_writeRegisterBytes(displayAddress, 0x40, data, count);
 }
 
 void writeRawDataZeros(const uint8_t count) {
-   i2c_master_startWrite(displayAddress);
-   i2c_master_writeByte(0x40);
-   for (uint8_t i = 0; i < count; i++) {
-       i2c_master_writeByte(0x00);
-   }
-   i2c_master_stop();
+    i2c_master_writeRegisterZeroBytes(displayAddress, 0x40, count);
 }
-
-
-#if !defined(_SSD1306_EXTERNAL_I2C_MASTER)
-
-    #if !defined(_XTAL_FREQ)
-        #error Must define _XTAL_FREQ
-    #endif
-
-    #define I2C_BAUDRATE_COUNTER  (_XTAL_FREQ / 4 / 400000 - 1)
-
-    #define I2C_READ  1
-    #define I2C_WRITE 0
-    #define I2C_ACK   0
-    #define I2C_NACK  1
-
-
-    void i2c_master_start(void) {
-        SSPCON2bits.SEN = 1;      // initiate Start condition
-        while (SSPCON2bits.SEN);  // wait until done
-    }
-
-    void i2c_master_stop(void) {
-        SSPCON2bits.PEN = 1;      // initiate Stop condition
-        while (SSPCON2bits.PEN);  // wait until done
-    }
-
-    void waitIdle(void) {
-        while ((SSPCON2 & 0x1F) | SSPSTATbits.R_nW);  // wait until idle
-    }
-
-    void resetBus(void) {
-        //reset I2C bus
-        LATC0 = 0;                                // set clock low
-        LATC1 = 0;                                // set data low
-        TRISC0 = 1;                               // clock pin configured as output
-        TRISC1 = 1;                               // data pin configured as input
-        for (unsigned char j=0; j<3; j++) {       // repeat 3 times with alternating data
-            for (unsigned char i=0; i<10; i++) {  // 9 cycles + 1 extra
-                TRISC0 = 0; __delay_us(50);       // force clock low
-                TRISC0 = 1; __delay_us(50);       // release clock high
-            }
-            TRISC1 = !TRISC1;                     // toggle data line
-        }
-    }
-
-    void i2c_master_init(void) {
-        SSPCON1 = 0;  SSPCON2 = 0;  SSPSTAT = 0;  // reset all
-
-        resetBus();
-        SSPCON1bits.SSPM = 0b1000;                // I2C master mode
-        SSPCON1bits.SSPEN = 1;                    // enable I2C master mode
-        SSP1STATbits.CKE = 1;                     // slew control enabled, low voltage input (SMBus) enables
-        SSP1ADD = I2C_BAUDRATE_COUNTER;           // setup speed
-
-        TRISC0 = 1;                               // clock pin configured as input
-        TRISC1 = 1;                               // data pin configured as input}
-    }
-
-    bool i2c_master_writeByte(const uint8_t value) {
-        waitIdle();
-        SSPBUF = value;                                  // set data
-        if (SSPCON1bits.WCOL) { return false; }          // fail if there is a collision
-        while (SSPSTATbits.BF);                          // wait until write is done
-        return SSPCON2bits.ACKSTAT ? false : true;       // return if successful
-    }
-
-    bool i2c_master_startWrite(const uint8_t address) {
-        waitIdle();
-        i2c_master_start();                                                  // start operation
-        return i2c_master_writeByte((uint8_t)((address << 1) | I2C_WRITE));  // load address
-    }
-
-#endif

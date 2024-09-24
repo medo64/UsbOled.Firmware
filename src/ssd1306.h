@@ -1,12 +1,13 @@
 /* Josip Medved <jmedved@jmedved.com> * www.medo64.com * MIT License */
+// 2024-09-23: Always uses external master
+// 2024-09-02: Refactored to work with OLED firmware
+// 2023-10-10: Expanded functionality
+// 2023-10-14: Internal I2C support
 
 /**
  * Handling SSD1306 display output
  *
- * Requires:
- *   _XTAL_FREQ <N>:               Frequency in Hz (only if not using external I2C master)
- *
- * Defines:
+ * Defines used:
  *   _SSD1306_DISPLAY_ADDRESS <N>: I2C address; default is 0x3C
  *   _SSD1306_DISPLAY_HEIGHT <N>:  Display height; can be 32 or 64
  *   _SSD1306_DISPLAY_WIDTH <N>:   Display width; can be 64 or 128
@@ -21,12 +22,8 @@
  *   _SSD1306_CONTROL_INVERT:      Allows display control (displayInvert, displayNormal)
  *   _SSD1306_CONTROL_FLIP:        Allows display control (displayFlip)
  *   _SSD1306_CONTROL_CONTRAST:    Allows contrast control (setContrast)
- *   _SSD1306_EXTERNAL_I2C_MASTER: Uses external I2C implementation instead of the built-in one
  *   _SSD1306_CUSTOM_INIT:         Uses customizable initialization function
  */
-// 2024-09-02: Refactored to work with OLED firmware
-// 2023-10-10: Expanded functionality
-// 2023-10-14: Internal I2C support
 
 #pragma once
 
@@ -35,10 +32,6 @@
 #include <stdint.h>
 #include "app.h"
 
-#if !defined(_16F1454) && !defined(_16F1455)
-    #error "Unsupported device"
-#endif
-
 #if !defined(_SSD1306_FONT_8x8) & !defined(_SSD1306_FONT_8x16)  // at least one font has to be supported
     #define _SSD1306_FONT_8x8
 #endif
@@ -46,7 +39,7 @@
 
 /** Initializes Display. */
 #if defined(_SSD1306_CUSTOM_INIT)
-    void ssd1306_init(const uint8_t address, const uint8_t baudRateCounter, const uint8_t width, const uint8_t height);
+    void ssd1306_init(const uint8_t address, const uint8_t width, const uint8_t height);
 #else
     void ssd1306_init(void);
 
@@ -62,7 +55,7 @@
 
     #if !defined(_SSD1306_DISPLAY_WIDTH)
         #define _SSD1306_DISPLAY_WIDTH   128
-    #elif (_SSD1306_DISPLAY_WIDTH != 64) && (_SSD1306_DISPLAY_HEIGHT != 128)
+    #elif (_SSD1306_DISPLAY_WIDTH != 64) && (_SSD1306_DISPLAY_WIDTH != 128)
         #error SSD1306 display width not supported
     #endif
 #endif

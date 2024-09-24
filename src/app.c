@@ -3,6 +3,7 @@
 #include "Microchip/usb_device.h"
 #include "Microchip/usb_device_cdc.h"
 #include "buffer.h"
+#include "i2c_master.h"
 #include "led.h"
 #include "settings.h"
 #include "ssd1306.h"
@@ -140,10 +141,11 @@ void initOled(void) {
         case 8: baudRateCounter = 14; break;    // 800 kHz @ 48 MHz
         case 9: baudRateCounter = 12; break;    // 900 kHz @ 48 MHz (~923 kHz)
         case 10: baudRateCounter = 11; break;   // 1000 kHz @ 48 MHz
-        default: baudRateCounter = 119; break;  // 100 kHz @ 48 MHz
+        default: baudRateCounter = 29; break;   // 100 kHz @ 48 MHz
     }
 
-    ssd1306_init(settings_getI2CAddress(), baudRateCounter, 128, settings_getDisplayHeight());
+    i2c_master_init(baudRateCounter);
+    ssd1306_init(settings_getI2CAddress(), 128, settings_getDisplayHeight());
     ssd1306_setContrast(settings_getDisplayBrightness());
     if (settings_getDisplayInverse()) {
         ssd1306_displayInvert();
