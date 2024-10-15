@@ -250,9 +250,9 @@ bool processCommand(const uint8_t* data, const uint8_t count) {
                 return true;
             } else if (count == 2) {  // set screen size
                 switch(*++data) {
-                    case 'A': settings_setDisplayHeight(64); break;
-                    case 'B': settings_setDisplayHeight(32); break;
-                    case 'C': settings_setDisplayHeight(128); break;
+                    case 'A': case 'a': settings_setDisplayHeight(64); break;
+                    case 'B': case 'b': settings_setDisplayHeight(32); break;
+                    case 'C': case 'c': settings_setDisplayHeight(128); break;
                     default: return false;
                 }
                 settings_save();
