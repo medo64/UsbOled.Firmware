@@ -430,7 +430,7 @@ Returns version.
 |-----------|----------------------------------------------------------------|
 | Request:  | `V` `LF`                                                       |
 | Response: | `<major>.<minor>LF`                                            |
-| Result:   | Moves cursor to row 2 and column 6.                            |
+| Result:   | Returns version.                                               |
 
 ##### Example (invalid) #####
 
@@ -438,7 +438,7 @@ Returns version.
 |-----------|----------------------------------------------------------------|
 | Request:  | `V09` `LF`                                                     |
 | Response: | `!` `LF`                                                       |
-| Result:   | No action is taken since row is outside of range.              |
+| Result:   | Invalid command.                                               |
 
 
 #### `\`` (set serial)  ####
