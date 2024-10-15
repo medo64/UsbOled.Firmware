@@ -75,6 +75,8 @@ void settings_setI2CSpeedIndex(const uint8_t value) {
 uint8_t settings_getDisplayHeight(void) {
     if (Settings.DisplayHeight == 32) {
         return 32;
+    } else if (Settings.DisplayHeight == 128) {
+        return 128;
     } else {
         return 64;
     }
