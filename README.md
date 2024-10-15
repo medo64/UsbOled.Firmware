@@ -112,9 +112,9 @@ Either output will exit the command mode.
 
 #### `#` (set size)
 
-This command will set screen size. Argument is either `A` (128x64) or `B`
-(128x32). Changes to setting are saved immediately. If called without
-argument, the current value will be returned.
+This command will set screen size. Argument is either `A` (128x64), `B`
+(128x32), or `C` (128x128). Changes to setting are saved immediately. If called
+without argument, the current value will be returned.
 
 ##### Example 1 (128x64)
 

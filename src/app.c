@@ -239,7 +239,10 @@ bool processCommand(const uint8_t* data, const uint8_t count) {
 
         case '#':  // screen size
             if (count == 1) {  // get screen size
-                if (settings_getDisplayHeight() == 32) {
+                uint8_t height = settings_getDisplayHeight();
+                if (height == 128) {
+                    OutputBufferAppend('C');
+                } else if (height == 32) {
                     OutputBufferAppend('B');
                 } else {
                     OutputBufferAppend('A');
@@ -249,6 +252,7 @@ bool processCommand(const uint8_t* data, const uint8_t count) {
                 switch(*++data) {
                     case 'A': settings_setDisplayHeight(64); break;
                     case 'B': settings_setDisplayHeight(32); break;
+                    case 'C': settings_setDisplayHeight(128); break;
                     default: return false;
                 }
                 settings_save();

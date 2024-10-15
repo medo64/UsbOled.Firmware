@@ -73,6 +73,9 @@ void ssd1306_internalInit() {
     if (displayHeight == 32) {
         writeRawCommand2(SSD1306_SET_COM_PINS_HARDWARE_CONFIGURATION, 0x02);      // Set COM Pins Hardware Configuration (0x02 128x32)
         writeRawCommand2(SSD1306_SET_CONTRAST_CONTROL, 0x8F);                     // Set Contrast Control (0x8F 128x32; external vcc; internal vcc)
+    } else if (displayHeight == 128) {
+        writeRawCommand2(SSD1306_SET_COM_PINS_HARDWARE_CONFIGURATION, 0x00);      // Set COM Pins Hardware Configuration (0x00 128x128)
+        writeRawCommand2(SSD1306_SET_CONTRAST_CONTROL, 0x53);                     // Set Contrast Control (0x53 128x128; external vcc; internal vcc)
     } else {
         writeRawCommand2(SSD1306_SET_COM_PINS_HARDWARE_CONFIGURATION, 0x12);      // Set COM Pins Hardware Configuration (0x12 128x64)
         writeRawCommand2(SSD1306_SET_CONTRAST_CONTROL, 0xCF);                     // Set Contrast Control (0xCF 128x64; external vcc; internal vcc)

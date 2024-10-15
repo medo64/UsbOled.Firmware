@@ -49,7 +49,7 @@
 
     #if !defined(_SSD1306_DISPLAY_HEIGHT)
         #define _SSD1306_DISPLAY_HEIGHT   32
-    #elif (_SSD1306_DISPLAY_HEIGHT != 32) && (_SSD1306_DISPLAY_HEIGHT != 64)
+    #elif (_SSD1306_DISPLAY_HEIGHT != 32) && (_SSD1306_DISPLAY_HEIGHT != 64) && (_SSD1306_DISPLAY_HEIGHT != 128)
         #error SSD1306 display height not supported
     #endif
 
