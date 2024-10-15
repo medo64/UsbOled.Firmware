@@ -1,11 +1,13 @@
 /* Josip Medved <jmedved@jmedved.com> * www.medo64.com * MIT License */
+// 2024-10-13: Added higher speed modes
 // 2024-09-23: Initial version
 
 /**
  * Handling I2C master communication
  *
  * Defines used:
- *   _I2C_MASTER_MODULE2:          Use module 2 (where PIC supports it)
+ *   _I2C_MASTER_RATE_KHZ <value>: If used, sets I2C speed to defined value
+ *   _I2C_MASTER_CUSTOM_INIT:      If set, allows for custom speed initialization
  *
  * Notes:
  *   Both CLOCK and DATA pin has to be configured as input
@@ -15,21 +17,31 @@
 
 #include <stdbool.h>
 #include <stdint.h>
+#include "app.h"
 
-#if !defined(_16F1454) && !defined(_16F1455) && !defined(_18F25K83) && !defined(_18F26K83)
-    #error "Unsupported device"
+#if defined(_I2C_MASTER_CUSTOM_INIT) && defined(_I2C_MASTER_RATE_KHZ)
+    #error "Cannot have both custom and rate defined"
 #endif
 
-
-#if defined(_16F1454) || defined(_16F1455)  // RC0 RC1
-    /** Initializes I2C as a master. */
-    void i2c_master_init(uint8_t baudRateCounter);
-#elif defined(_18F25K83) || defined(_18F26K83)
+#if defined(_I2C_MASTER_CUSTOM_INIT)
+    /** Initializes I2C as a master; rate is in 10 kHz */
+    void i2c_master_init(uint8_t rate);
+#else
     /** Initializes I2C as a master. */
     void i2c_master_init(void);
 #endif
 
-    /** Reads multiple bytes from a register. */
+#if defined(_I2C_MASTER_RATE_KHZ)
+    #if !defined(_I2C_MASTER_RATE_KHZ)
+        #error "Must have _XTAL_FREQ defined"
+    #endif
+    #if (_I2C_MASTER_RATE_KHZ < 100) || (_I2C_MASTER_RATE_KHZ > 1000)
+        #error "I2C rate not in 100-1000 range"
+    #endif
+#endif
+
+
+/** Reads multiple bytes from a register. */
 bool i2c_master_readRegisterBytes(const uint8_t deviceAddress, const uint8_t registerAddress, uint8_t* readData, const uint8_t readCount);
 
 /** Writes multiple bytes. */

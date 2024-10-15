@@ -132,19 +132,18 @@ void __interrupt() SYS_InterruptHigh(void) {
 void initOled(void) {
     uint8_t baudRateCounter;
     switch (settings_getI2CSpeedIndex()) {
-        case 2: baudRateCounter = 59; break;    // 200 kHz @ 48 MHz
-        case 3: baudRateCounter = 39; break;    // 300 kHz @ 48 MHz
-        case 4: baudRateCounter = 29; break;    // 400 kHz @ 48 MHz
-        case 5: baudRateCounter = 23; break;    // 500 kHz @ 48 MHz
-        case 6: baudRateCounter = 19; break;    // 600 kHz @ 48 MHz
-        case 7: baudRateCounter = 16; break;    // 700 kHz @ 48 MHz (~705 kHz)
-        case 8: baudRateCounter = 14; break;    // 800 kHz @ 48 MHz
-        case 9: baudRateCounter = 12; break;    // 900 kHz @ 48 MHz (~923 kHz)
-        case 10: baudRateCounter = 11; break;   // 1000 kHz @ 48 MHz
-        default: baudRateCounter = 29; break;   // 100 kHz @ 48 MHz
+        case 2: i2c_master_init(20); break;    // 200 kHz @ 48 MHz
+        case 3: i2c_master_init(30); break;    // 300 kHz @ 48 MHz
+        case 4: i2c_master_init(40); break;    // 400 kHz @ 48 MHz
+        case 5: i2c_master_init(50); break;    // 500 kHz @ 48 MHz
+        case 6: i2c_master_init(60); break;    // 600 kHz @ 48 MHz
+        case 7: i2c_master_init(70); break;    // 700 kHz @ 48 MHz (~705 kHz)
+        case 8: i2c_master_init(80); break;    // 800 kHz @ 48 MHz
+        case 9: i2c_master_init(90); break;    // 900 kHz @ 48 MHz (~923 kHz)
+        case 10: i2c_master_init(100); break;  // 1000 kHz @ 48 MHz
+        default: i2c_master_init(10); break;   // 100 kHz @ 48 MHz
     }
 
-    i2c_master_init(baudRateCounter);
     ssd1306_init(settings_getI2CAddress(), 128, settings_getDisplayHeight());
     ssd1306_setContrast(settings_getDisplayBrightness());
     if (settings_getDisplayInverse()) {
