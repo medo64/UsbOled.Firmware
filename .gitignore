@@ -13,3 +13,5 @@ src/nbproject/Makefile-genesis.properties
 src/nbproject/Makefile-*.mk
 src/nbproject/Package-*.bash
 tmp/
+
+*(blueprint)*

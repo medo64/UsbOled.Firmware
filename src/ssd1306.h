@@ -1,4 +1,7 @@
 /* Josip Medved <jmedved@jmedved.com> * www.medo64.com * MIT License */
+// 2024-10-15: Adjusted for 128x128 display
+// 2024-09-26: Added inverse writing
+//             Added progress bar
 // 2024-09-23: Always uses external master
 // 2024-09-02: Refactored to work with OLED firmware
 // 2023-10-10: Expanded functionality
@@ -9,7 +12,7 @@
  *
  * Defines used:
  *   _SSD1306_DISPLAY_ADDRESS <N>: I2C address; default is 0x3C
- *   _SSD1306_DISPLAY_HEIGHT <N>:  Display height; can be 32 or 64
+ *   _SSD1306_DISPLAY_HEIGHT <N>:  Display height; can be 32, 64, or 128
  *   _SSD1306_DISPLAY_WIDTH <N>:   Display width; can be 64 or 128
  *   _SSD1306_DISPLAY_FLIP:        Flips screen to other direction
  *   _SSD1306_FONT_8x8:            Use 8-pixel high text
@@ -18,6 +21,8 @@
  *   _SSD1306_FONT_8x16:           Use 16-pixel high text
  *   _SSD1306_FONT_8x16_LOW:       Include lower 32 ASCII control characters
  *   _SSD1306_FONT_8x16_HIGH:      Include upper 128 CP437 ASCII characters
+ *   _SSD1306_WRITE_INVERSE:       Allows inverse writes
+ *   _SSD1306_WRITE_PROGRESS:      Allows writing progress bar
  *   _SSD1306_CONTROL_DISPLAY:     Allows display control (displayOff, displayOn)
  *   _SSD1306_CONTROL_INVERT:      Allows display control (displayInvert, displayNormal)
  *   _SSD1306_CONTROL_FLIP:        Allows display control (displayFlip)
@@ -131,37 +136,75 @@ void ssd1306_clearAll(void);
 #endif
 
 
-/** Writes custom 8x8 character at the current position */
-bool ssd1306_drawCharacter(const uint8_t* data, const uint8_t count);
+/** Writes custom 8x8 character at the current position from 8 bytes given. */
+bool ssd1306_drawCustom(const uint8_t* data);
 
-
-/** Writes 8x8 character at the current position */
 #if defined(_SSD1306_FONT_8x8)
+    /** Writes 8x8 character at the current position */
     bool ssd1306_writeCharacter(const char value);
+
+    #if defined _SSD1306_WRITE_INVERSE
+        /** Writes inverse 8x8 character at the current position */
+        bool ssd1306_writeInverseCharacter(const char value);
+    #endif
 #endif
 
-/** Writes 8x16 character at the current position */
 #if defined(_SSD1306_FONT_8x16)
+    /** Writes custom 8x16 character at the current position from 8 bytes given. */
+    bool ssd1306_drawCustom16(const uint8_t* data);
+
+    /** Writes 8x16 character at the current position */
     bool ssd1306_writeCharacter16(const char value);
+
+    #if defined _SSD1306_WRITE_INVERSE
+        /** Writes inverse 8x16 character at the current position */
+        bool ssd1306_writeInverseCharacter16(const char value);
+    #endif
 #endif
 
 
-/** Writes 8x8 text at the current position */
 #if defined(_SSD1306_FONT_8x8)
+    /** Writes 8x8 text at the current position */
     bool ssd1306_writeText(const char* text);
+
+    #if defined _SSD1306_WRITE_INVERSE
+        /** Writes inverse 8x8 text at the current position */
+        bool ssd1306_writeInverseText(const char* text);
+    #endif
 #endif
 
-/** Writes 8x8 text at the current position and moves to the next line */
 #if defined(_SSD1306_FONT_8x8)
+    /** Writes 8x8 text at the current position and moves to the next line */
     bool ssd1306_writeLine(const char* text);
+
+    #if defined _SSD1306_WRITE_INVERSE
+        /** Writes inverse 8x8 text at the current position and moves to the next line */
+        bool ssd1306_writeInverseLine(const char* text);
+    #endif
 #endif
 
-/** Writes 8x16 text at the current position */
 #if defined(_SSD1306_FONT_8x16)
+    /** Writes 8x16 text at the current position */
     bool ssd1306_writeText16(const char* text);
+
+    #if defined _SSD1306_WRITE_INVERSE
+        /** Writes inverse 8x16 text at the current position */
+        bool ssd1306_writeInverseText16(const char* text);
+    #endif
 #endif
 
-/** Writes 8x16 text at the current position and moves to the next line */
 #if defined(_SSD1306_FONT_8x16)
+    /** Writes 8x16 text at the current position and moves to the next line */
     bool ssd1306_writeLine16(const char* text);
+
+    #if defined _SSD1306_WRITE_INVERSE
+        /** Writes inverse 8x16 text at the current position and moves to the next line */
+        bool ssd1306_writeInverseLine16(const char* text);
+    #endif
+#endif
+
+
+#if defined(_SSD1306_WRITE_PROGRESS)
+    /** Writes progress bar with a given value */
+    bool ssd1306_writeProgress(const uint8_t characterCount, const uint8_t percentValue);
 #endif

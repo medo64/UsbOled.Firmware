@@ -398,7 +398,11 @@ bool processCommand(const uint8_t* data, const uint8_t count) {
                     if (!hexToNibble(*++data, &customCharData[i])) { return false; }
                     if (!hexToNibble(*++data, &customCharData[i])) { return false; }
                 }
-                return ssd1306_drawCharacter(&customCharData[0], dataCount);
+                if (dataCount == 16) {
+                    return ssd1306_drawCustom16(&customCharData[0]);
+                } else {
+                    return ssd1306_drawCustom(&customCharData[0]);
+                }
             }
             break;
 
