@@ -16,7 +16,6 @@
         <itemPath>Microchip/usb_hal.h</itemPath>
         <itemPath>Microchip/usb_hal_pic16f1.h</itemPath>
       </logicalFolder>
-      <itemPath>led.h</itemPath>
       <itemPath>font.h</itemPath>
       <itemPath>ssd1306.h</itemPath>
       <itemPath>i2c_master.h</itemPath>
@@ -25,6 +24,7 @@
       <itemPath>settings.h</itemPath>
       <itemPath>app.h</itemPath>
       <itemPath>ssd1306_font.h</itemPath>
+      <itemPath>io.h</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
@@ -46,12 +46,12 @@
         <itemPath>Microchip/usb_events.c</itemPath>
       </logicalFolder>
       <itemPath>app.c</itemPath>
-      <itemPath>led.c</itemPath>
       <itemPath>ssd1306.c</itemPath>
       <itemPath>i2c_master.c</itemPath>
       <itemPath>system.c</itemPath>
       <itemPath>buffer.c</itemPath>
       <itemPath>settings.c</itemPath>
+      <itemPath>io.c</itemPath>
     </logicalFolder>
   </logicalFolder>
   <sourceRootList>

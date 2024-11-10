@@ -4,7 +4,7 @@
 #include "Microchip/usb_device_cdc.h"
 #include "buffer.h"
 #include "i2c_master.h"
-#include "led.h"
+#include "io.h"
 #include "settings.h"
 #include "ssd1306.h"
 #include "system.h"
@@ -21,29 +21,29 @@ uint16_t LedTimeout = LED_TIMEOUT_NONE;
 
 void main(void) {
     init();
-    led_init();
+    io_init();
 
-    led_activity_on();
+    io_led_activity_on();
 
     settings_init();
     initOled();
 
-    led_activity_off();
+    io_led_activity_off();
 
 #if defined(USB_INTERRUPT)
     interruptsEnable();
 #endif
-    
+
     USBDeviceInit();
     USBDeviceAttach();
 
-    led_activity_off();
-    
+    io_led_activity_off();
+
     bool lastUseLarge = false;
     while(true) {
         if (LedTimeout != LED_TIMEOUT_NONE) {
             if (LedTimeout == 0) {
-                led_activity_off();
+                io_led_activity_off();
                 LedTimeout = LED_TIMEOUT_NONE;
             } else {
                 LedTimeout--;
@@ -62,7 +62,7 @@ void main(void) {
         // USB receive
         uint8_t readCount = getsUSBUSART(UsbReadBuffer, USB_READ_BUFFER_MAX); //until the buffer is free.
         if (readCount > 0) {
-            led_activity_on(); LedTimeout = LED_TIMEOUT;
+            io_led_activity_on(); LedTimeout = LED_TIMEOUT;
             for (uint8_t i = 0; i < readCount; i++) {  // copy to buffer
                 uint8_t value = UsbReadBuffer[i];
                 if (InputBufferCorrupted && ((value == 0x0A) || (value == 0x0D))) {
@@ -80,7 +80,7 @@ void main(void) {
 
         // USB send
         if ((OutputBufferCount > 0) && USBUSARTIsTxTrfReady()) {  // send output if TX is ready
-            led_activity_on(); LedTimeout = LED_TIMEOUT;
+            io_led_activity_on(); LedTimeout = LED_TIMEOUT;
             uint8_t writeCount = 0;
             for (uint8_t i = 0; i < USB_WRITE_BUFFER_MAX; i++) {  // copy to output buffer
                 if (i < OutputBufferCount) {
